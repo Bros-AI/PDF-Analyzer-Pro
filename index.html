@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered PDF Form Filler | Project Phoenix</title>
-    <meta name="description" content="The ultimate multimodal AI tool to fill PDF forms. Create a case, upload a primary PDF, add multiple context files (PNG, JPG, CSV, TXT), and let Gemini AI synthesize the data to auto-fill the form for you.">
+    <title>Professional PDF Form Automation Platform</title>
+    <meta name="description" content="Enterprise-grade AI-powered PDF form filling solution. Upload forms, add supporting documents, and automatically populate fields using advanced AI data extraction and synthesis.">
     <meta name="keywords" content="ai pdf filler, case file ui, multimodal ai, png to pdf form, csv to pdf, gemini api, json to pdf, fill pdf from json, pdf automation, pdf form filler, fillable pdf, client-side pdf tool, pdf-lib, bros ai">
     <link rel="canonical" href="https://bros-ai.github.io/PDF-Analyzer-Pro/">
     
@@ -18,81 +18,477 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-        --primary-color: #1a73e8; --primary-dark: #1255a5; --secondary-color: #5f6368;
-        --accent-success: #1e8e3e; --accent-error: #d93025; --accent-warning: #f9ab00; --accent-ai: #8e44ad; --accent-ai-dark: #702f8a;
-        --background-color: #f8f9fa; --surface-color: #ffffff; --on-surface-color: #202124;
-        --border-color: #dadce0; --font-family: 'Roboto', sans-serif; --border-radius: 12px;
-        --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-        --shadow-2: 0 4px 8px 0 rgba(60,64,67,0.15), 0 6px 20px 0 rgba(60,64,67,0.1);
-        --transition-speed: 0.2s ease-in-out;
+            --primary-color: #1a73e8; 
+            --primary-dark: #1255a5; 
+            --secondary-color: #5f6368;
+            --accent-success: #1e8e3e; 
+            --accent-error: #d93025; 
+            --accent-warning: #f9ab00; 
+            --accent-ai: #8e44ad; 
+            --accent-ai-dark: #702f8a;
+            --background-color: #f8f9fa; 
+            --surface-color: #ffffff; 
+            --on-surface-color: #202124;
+            --border-color: #dadce0; 
+            --font-family: 'Roboto', sans-serif; 
+            --border-radius: 12px;
+            --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --shadow-2: 0 4px 8px 0 rgba(60,64,67,0.15), 0 6px 20px 0 rgba(60,64,67,0.1);
+            --transition-speed: 0.2s ease-in-out;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-family); background-color: var(--background-color); color: var(--on-surface-color); line-height: 1.6; }
-        .app-container { max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; min-height: 100vh; }
-        /* --- Header & Typography --- */
+        body { 
+            font-family: var(--font-family); 
+            background-color: var(--background-color); 
+            color: var(--on-surface-color); 
+            line-height: 1.6; 
+        }
+        .app-container { 
+            width: 100%;
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        
+        /* Header & Typography */
         .header { text-align: center; margin-bottom: 32px; }
         .header h1 { font-size: 2.8em; font-weight: 700; margin-bottom: 8px; }
         .header h1 .ai-highlight { color: var(--accent-ai); }
-        .header p { font-size: 1.2em; color: var(--secondary-color); max-width: 800px; margin: 0 auto; }
-        .section-title { font-size: 1.5em; font-weight: 500; color: var(--on-surface-color); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        /* --- API Key Section --- */
-        .api-key-section { margin-bottom: 24px; padding: 20px; border-radius: var(--border-radius); background-color: #f1f3f4; border: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: flex-start; }
-        .api-key-section .input-group label { font-weight: 500; display: block; margin-bottom: 8px; }
-        .api-key-section .input-group .input-wrapper { display: flex; align-items: center; gap: 8px; }
-        .api-key-section .input-group input, .api-key-section .input-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1em; }
+        .header p { 
+            font-size: 1.2em; 
+            color: var(--secondary-color); 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .section-title { 
+            font-size: 1.5em; 
+            font-weight: 500; 
+            color: var(--on-surface-color); 
+            margin-bottom: 16px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 8px; 
+        }
+        
+        /* Card-like Sections */
+        .card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow-1);
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        /* API Key Section */
+        .api-key-section { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            align-items: flex-start; 
+        }
+        .api-key-section .input-group label { 
+            font-weight: 500; 
+            display: block; 
+            margin-bottom: 8px; 
+        }
+        .api-key-section .input-group .input-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .api-key-section .input-group input, 
+        .api-key-section .input-group select { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            font-size: 1em; 
+        }
         #api-key-status { font-size: 1.2em; }
         #api-key-status.success { color: var(--accent-success); }
         #api-key-status.error { color: var(--accent-error); }
-        .api-key-section p { font-size: 0.8em; color: var(--secondary-color); margin-top: 8px; grid-column: 1 / -1; }
-        /* --- Upload Section --- */
-        .upload-container { text-align: center; border: 2px dashed var(--border-color); border-radius: var(--border-radius); padding: 48px 24px; transition: border-color var(--transition-speed), background-color var(--transition-speed); }
-        .upload-container.drag-over { border-color: var(--primary-color); background-color: #e8f0fe; }
-        /* --- Controls & Buttons --- */
-        .btn { display: inline-flex; align-items: center; justify-content: center; font-weight: 500; font-size: 1em; padding: 10px 24px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: background-color var(--transition-speed), box-shadow var(--transition-speed); text-align: center; }
+        .api-key-section p { 
+            font-size: 0.8em; 
+            color: var(--secondary-color); 
+            margin-top: 8px; 
+            grid-column: 1 / -1; 
+        }
+        
+        /* Upload Section - Full Width */
+        .upload-section {
+            width: 100%;
+        }
+        .upload-container { 
+            text-align: center; 
+            border: 2px dashed var(--border-color); 
+            border-radius: var(--border-radius); 
+            padding: 48px 24px; 
+            transition: border-color var(--transition-speed), background-color var(--transition-speed); 
+            width: 100%;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .upload-container.drag-over { 
+            border-color: var(--primary-color); 
+            background-color: #e8f0fe; 
+        }
+        .upload-container h2 {
+            font-size: 1.8em;
+            margin-bottom: 12px;
+            color: var(--on-surface-color);
+        }
+        .upload-container p {
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        /* Controls & Buttons */
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 500; 
+            font-size: 1em; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: 1px solid transparent; 
+            cursor: pointer; 
+            transition: all var(--transition-speed); 
+            text-align: center; 
+            text-decoration: none;
+        }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary:hover:not(:disabled) { background-color: var(--primary-dark); box-shadow: var(--shadow-1); }
+        .btn-primary:hover:not(:disabled) { 
+            background-color: var(--primary-dark); 
+            box-shadow: var(--shadow-1); 
+            transform: translateY(-1px);
+        }
         .btn-ai { background-color: var(--accent-ai); color: white; }
-        .btn-ai:hover:not(:disabled) { background-color: var(--accent-ai-dark); box-shadow: var(--shadow-1); }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.7; }
-        /* --- PDF Case File Section --- */
-        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px; }
-        .pdf-card { background: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--shadow-1); display: flex; flex-direction: column; transition: transform var(--transition-speed), box-shadow var(--transition-speed); }
-        .pdf-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
-        .pdf-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
-        .pdf-filename { font-weight: 500; font-size: 1em; word-break: break-all; margin-bottom: 4px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .pdf-stats { font-size: 0.8em; color: var(--secondary-color); margin-bottom: 12px; }
-        /* --- AI Case File UI --- */
-        .ai-filler-section { border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-top: 16px; background: #fafafa; }
-        .step-label { font-weight: 700; color: var(--accent-ai); margin-bottom: 8px; display: block; font-size: 1.1em; }
-        .context-drop-zone { border: 2px dashed var(--border-color); border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 12px; transition: all var(--transition-speed); }
-        .context-drop-zone.drag-over { border-color: var(--accent-ai); background-color: #f3e5f5; }
-        .context-drop-zone p { color: var(--secondary-color); margin-bottom: 12px; }
-        .context-file-list { list-style: none; max-height: 150px; overflow-y: auto; background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; }
-        .context-file-list li { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; font-size: 0.85em; border-radius: 4px; }
-        .context-file-list li:nth-child(odd) { background-color: #f8f9fa; }
-        .remove-context-file-btn { background: none; border: none; color: var(--accent-error); cursor: pointer; font-weight: bold; font-size: 1.2em; padding: 0 4px; }
-        /* --- Manual Filler Section --- */
+        .btn-ai:hover:not(:disabled) { 
+            background-color: var(--accent-ai-dark); 
+            box-shadow: var(--shadow-1); 
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: var(--on-surface-color);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #e8eaed;
+            transform: translateY(-1px);
+        }
+        .btn:disabled { 
+            background-color: #ccc; 
+            cursor: not-allowed; 
+            opacity: 0.7; 
+        }
+        
+        /* PDF Grid Layout */
+        .pdf-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
+            gap: 24px; 
+            width: 100%;
+        }
+        .pdf-card { 
+            background: var(--surface-color); 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow-1); 
+            display: flex; 
+            flex-direction: column; 
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed); 
+            width: 100%;
+        }
+        .pdf-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: var(--shadow-2); 
+        }
+        .pdf-info { 
+            padding: 24px; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .pdf-filename { 
+            font-weight: 500; 
+            font-size: 1.2em; 
+            word-break: break-all; 
+            margin-bottom: 4px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 8px; 
+        }
+        .pdf-stats { 
+            font-size: 0.9em; 
+            color: var(--secondary-color); 
+            margin-bottom: 12px; 
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        /* Enhanced Analysis Display */
+        .analysis-details {
+            background-color: #f0f7ff;
+            border: 1px solid #d0e8ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        .field-list {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.85em;
+            color: var(--secondary-color);
+        }
+        .field-item {
+            padding: 2px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .field-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* AI Section */
+        .ai-filler-section { 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--border-radius); 
+            padding: 16px; 
+            margin-top: 16px; 
+            background: #fafafa; 
+        }
+        .step-label { 
+            font-weight: 700; 
+            color: var(--accent-ai); 
+            margin-bottom: 8px; 
+            display: block; 
+            font-size: 1.1em; 
+        }
+        .context-drop-zone { 
+            border: 2px dashed var(--border-color); 
+            border-radius: 8px; 
+            padding: 24px; 
+            text-align: center; 
+            margin-bottom: 12px; 
+            transition: all var(--transition-speed); 
+        }
+        .context-drop-zone.drag-over { 
+            border-color: var(--accent-ai); 
+            background-color: #f3e5f5; 
+        }
+        .context-drop-zone p { 
+            color: var(--secondary-color); 
+            margin-bottom: 12px; 
+        }
+        .context-file-list { 
+            list-style: none; 
+            max-height: 150px; 
+            overflow-y: auto; 
+            background: white; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            padding: 8px; 
+        }
+        .context-file-list li { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 6px 8px; 
+            font-size: 0.85em; 
+            border-radius: 4px; 
+            margin-bottom: 2px;
+        }
+        .context-file-list li:nth-child(odd) { 
+            background-color: #f8f9fa; 
+        }
+        .remove-context-file-btn { 
+            background: none; 
+            border: none; 
+            color: var(--accent-error); 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            padding: 0 4px; 
+            border-radius: 3px;
+        }
+        .remove-context-file-btn:hover {
+            background-color: var(--accent-error);
+            color: white;
+        }
+        
+        /* Enhanced Prompt Editor */
+        .prompt-editor { 
+            margin: 16px 0; 
+        }
+        .prompt-editor textarea { 
+            width: 100%; 
+            min-height: 140px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.85em; 
+            resize: vertical; 
+            padding: 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            background-color: #fdfdfd; 
+            line-height: 1.4;
+        }
+        
+        /* Enhanced JSON Output */
         .pdf-filler-section { margin-top: 16px; }
-        .pdf-filler-section textarea { width: 100%; min-height: 150px; font-family: monospace; font-size: 0.85em; resize: vertical; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background-color: #fdfdfd; margin-top: 8px;}
-        .filler-status { font-size: 0.8em; text-align: center; margin-top: 4px; height: 1.2em; font-weight: 500; }
+        .pdf-filler-section textarea { 
+            width: 100%; 
+            min-height: 180px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.85em; 
+            resize: vertical; 
+            padding: 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            background-color: #fdfdfd;
+            line-height: 1.4;
+        }
+        .manual-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .filler-status { 
+            font-size: 0.85em; 
+            text-align: center; 
+            margin-top: 12px; 
+            height: auto;
+            min-height: 1.2em; 
+            font-weight: 500; 
+            padding: 4px;
+        }
         .filler-status.success { color: var(--accent-success); }
         .filler-status.error { color: var(--accent-error); }
-        .action-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
-        /* --- Other Styles --- */
+        .filler-status.warning { color: var(--accent-warning); }
+        
+        /* JSON Editor Enhancements */
+        .json-editor-section {
+            margin-top: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            background-color: #fafafa;
+        }
+        .json-editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .json-editor-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .json-editor-actions button {
+            padding: 4px 8px;
+            font-size: 0.8em;
+        }
+        
+        /* Action Buttons */
+        .action-buttons { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 16px; 
+            margin-top: 24px; 
+        }
+        
+        /* Other Styles */
         .hidden { display: none !important; }
-        .heart { color: #e74c3c; display: inline-block; animation: heartbeat 1.5s ease-in-out infinite; }
-        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; text-align: center; padding: 20px; }
+        .heart { 
+            color: #e74c3c; 
+            display: inline-block; 
+            animation: heartbeat 1.5s ease-in-out infinite; 
+        }
+        @keyframes heartbeat { 
+            0%, 100% { transform: scale(1); } 
+            50% { transform: scale(1.2); } 
+        }
+        .loading-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 255, 255, 0.95); 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+            text-align: center; 
+            padding: 20px; 
+        }
         .loading-overlay.visible { display: flex; }
-        .spinner { width: 48px; height: 48px; border: 5px solid #d2e3fc; border-bottom-color: var(--primary-color); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { 
+            width: 48px; 
+            height: 48px; 
+            border: 5px solid #d2e3fc; 
+            border-bottom-color: var(--primary-color); 
+            border-radius: 50%; 
+            display: inline-block; 
+            animation: rotation 1s linear infinite; 
+        }
+        @keyframes rotation { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        /* Size warnings */
+        .size-warning { 
+            font-size: 0.75em; 
+            color: var(--accent-warning); 
+            margin-top: 4px; 
+            padding: 6px 10px; 
+            background: #fff3cd; 
+            border: 1px solid #ffeaa7; 
+            border-radius: 4px; 
+        }
+        
+        /* Error Display */
+        .error-message {
+            color: var(--accent-error);
+            font-weight: 500;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #ffeaea;
+            border: 1px solid #ffcdd2;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .api-key-section {
+                grid-template-columns: 1fr;
+            }
+            .pdf-grid {
+                grid-template-columns: 1fr;
+            }
+            .manual-actions {
+                flex-direction: column;
+            }
+            .upload-container {
+                padding: 32px 16px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header class="header">
-            <h1><span class="ai-highlight">AI PDF Filler</span>: Project Phoenix</h1>
-            <p>Create a case file, add context documents (images, CSVs, etc.), and let Gemini AI synthesize the data to fill your PDF form.</p>
+            <h1><span class="ai-highlight">Professional PDF</span> Form Automation</h1>
+            <p>Enterprise-grade AI platform for automated form completion. Upload documents, add supporting files, and let advanced AI extract and synthesize data to populate your forms.</p>
         </header>
 
         <main class="main-content">
@@ -110,7 +506,8 @@
                         <option>Enter a valid API key first</option>
                     </select>
                 </div>
-                <p>Your key is stored only in your browser. Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                <p>Your key is stored only in your browser. Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.<br>
+                <small style="color: var(--accent-warning);"><strong>Note:</strong> Some browsers/networks may block direct API calls due to CORS policy. If you experience connection issues, try a different browser or network.</small></p>
             </section>
 
             <section class="upload-section card">
@@ -119,7 +516,7 @@
                     <p>This is the main form you want to fill out.</p>
                     <label for="file-input" class="btn btn-primary">Browse for PDF Form</label>
                     <input type="file" id="file-input" accept=".pdf,application/pdf" multiple class="hidden">
-                    <div id="error-message" class="error-message" role="alert" style="margin-top:20px;"></div>
+                    <div id="error-message" class="error-message hidden" role="alert"></div>
                 </div>
             </section>
 
@@ -144,13 +541,15 @@
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
+        
         class PDFFiller {
             constructor() {
                 this.state = { files: [] };
                 this.elements = this.initializeElements();
                 this.initializeEventListeners();
                 this.debounceTimeout = null;
+                this.maxRequestSize = 15 * 1024 * 1024; // 15MB Gemini API limit for inline data
+                this.requestTimeout = 120000; // 2 minutes timeout for large requests
             }
 
             initializeElements() {
@@ -172,30 +571,43 @@
             
             initializeEventListeners() {
                 const dropZone = this.elements.uploadContainer;
+                
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                     dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
                 });
-                ['dragenter', 'dragover'].forEach(eventName => dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false));
-                ['dragleave', 'drop'].forEach(eventName => dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false));
+                ['dragenter', 'dragover'].forEach(eventName => 
+                    dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false)
+                );
+                ['dragleave', 'drop'].forEach(eventName => 
+                    dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false)
+                );
                 dropZone.addEventListener('drop', (e) => this.handleFileSelect(e.dataTransfer.files), false);
+                
                 this.elements.fileInput.addEventListener('change', (e) => this.handleFileSelect(e.target.files));
                 this.elements.resetBtn.addEventListener('click', () => this.resetApplication());
+                
                 this.elements.apiKeyInput.addEventListener('input', (e) => {
                     clearTimeout(this.debounceTimeout);
                     this.debounceTimeout = setTimeout(() => this.validateAndFetchModels(e.target.value.trim()), 500);
                 });
 
-                // Delegated event listeners for dynamic content
+                // Event delegation for all dynamic content within the PDF grid
                 this.elements.pdfGrid.addEventListener('click', (e) => {
                     const button = e.target.closest('button');
                     if (!button) return;
+                    
                     const card = e.target.closest('.pdf-card');
-                    const fileId = card.dataset.id;
-                    if (button.dataset.action === 'remove-case') this.removePDF(fileId);
-                    if (button.dataset.action === 'get-manual-json') this.handleGetFillableJSON(fileId);
-                    if (button.dataset.action === 'fill-and-download') this.handleFillAndDownload(fileId);
-                    if (button.dataset.action === 'auto-fill-ai') this.handleAutoFill(fileId, card);
-                    if (button.dataset.action === 'remove-context-file') {
+                    const fileId = card?.dataset.id;
+                    const action = button.dataset.action;
+
+                    if (action === 'remove-case') this.removePDF(fileId);
+                    else if (action === 'fill-and-download') this.handleFillAndDownload(fileId);
+                    else if (action === 'auto-fill-ai') this.handleAutoFill(fileId, card);
+                    else if (action === 'ai-fill-and-download') this.handleAIFillAndDownload(fileId, card);
+                    else if (action === 'validate-json') this.validateJSON(fileId, card);
+                    else if (action === 'format-json') this.formatJSON(fileId, card);
+                    else if (action === 'add-field') this.addJSONField(fileId, card);
+                    else if (action === 'remove-context-file') {
                         const contextFileId = button.dataset.contextFileId;
                         this.handleContextFileRemove(fileId, contextFileId);
                     }
@@ -220,11 +632,7 @@
                 if (!dropZone) return;
                 e.preventDefault();
                 e.stopPropagation();
-                if (isOver) {
-                    dropZone.classList.add('drag-over');
-                } else {
-                    dropZone.classList.remove('drag-over');
-                }
+                dropZone.classList.toggle('drag-over', isOver);
             }
 
             handleContextDrop(e) {
@@ -240,14 +648,16 @@
             handleContextFileAdd(fileId, files) {
                 const fileObj = this.state.files.find(f => f.id === fileId);
                 if (!fileObj || !files) return;
-
+                
                 Array.from(files).forEach(file => {
-                    fileObj.contextFiles.push({
-                        id: `${Date.now()}-${Math.random()}`,
-                        file: file
+                    fileObj.contextFiles.push({ 
+                        id: `${Date.now()}-${Math.random()}`, 
+                        file: file, 
+                        size: file.size 
                     });
                 });
                 this.renderContextFileList(fileId);
+                this.updateSizeWarnings(fileId);
             }
 
             handleContextFileRemove(fileId, contextFileId) {
@@ -255,41 +665,96 @@
                 if (!fileObj) return;
                 fileObj.contextFiles = fileObj.contextFiles.filter(cf => cf.id !== contextFileId);
                 this.renderContextFileList(fileId);
+                this.updateSizeWarnings(fileId);
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            async calculateRequestSize(fileObj) {
+                let totalSize = fileObj.file.size;
+                for (const contextFile of fileObj.contextFiles) {
+                    totalSize += contextFile.size;
+                }
+                // Base64 encoding adds about 33% overhead, plus some buffer for JSON structure
+                return Math.ceil(totalSize * 1.4);
+            }
+
+            async updateSizeWarnings(fileId) {
+                const fileObj = this.state.files.find(f => f.id === fileId);
+                if (!fileObj) return;
+                
+                const card = document.querySelector(`[data-id="${fileId}"]`);
+                let warningEl = card.querySelector('.size-warning');
+                
+                const estimatedSize = await this.calculateRequestSize(fileObj);
+                
+                // Only show warning if significantly over the limit (with more generous threshold)
+                const actualLimit = this.maxRequestSize * 0.8; // Use 80% of the limit as warning threshold
+                
+                if (estimatedSize > actualLimit) {
+                    const warningText = `⚠️ Large file size detected (${this.formatFileSize(estimatedSize)}). If AI processing fails, try reducing file sizes.`;
+                    if (!warningEl) {
+                        warningEl = document.createElement('div');
+                        warningEl.className = 'size-warning';
+                        warningEl.style.backgroundColor = '#fff8e1'; // Less alarming color
+                        warningEl.style.borderColor = '#ffcc02';
+                        warningEl.style.color = '#e65100';
+                        // Insert after the context file list for visibility
+                        card.querySelector('.context-file-list').insertAdjacentElement('afterend', warningEl);
+                    }
+                    warningEl.textContent = warningText;
+                    warningEl.style.display = 'block';
+                    // Don't disable buttons, just show warning
+                } else {
+                    if (warningEl) warningEl.style.display = 'none';
+                }
+                
+                // Always update button states regardless of warning
+                this.updateAIButtonStates(!this.elements.modelSelector.disabled);
             }
 
             renderContextFileList(fileId) {
                 const fileObj = this.state.files.find(f => f.id === fileId);
                 const listEl = document.getElementById(`context-file-list-${fileId}`);
                 if (!listEl || !fileObj) return;
-
+                
                 listEl.innerHTML = fileObj.contextFiles.length === 0 
-                    ? '<li>No context files added yet.</li>'
+                    ? '<li>No supporting documents added yet.</li>'
                     : fileObj.contextFiles.map(cf => `
                         <li>
-                            <span>${cf.file.name}</span>
+                            <span>${cf.file.name} (${this.formatFileSize(cf.size)})</span>
                             <button class="remove-context-file-btn" data-action="remove-context-file" data-context-file-id="${cf.id}" title="Remove file">&times;</button>
                         </li>
                     `).join('');
-                
-                const card = listEl.closest('.pdf-card');
-                const aiButton = card.querySelector('[data-action="auto-fill-ai"]');
-                if (aiButton) {
-                    aiButton.disabled = fileObj.contextFiles.length === 0 || this.elements.modelSelector.disabled;
-                }
+                this.updateAIButtonStates(!this.elements.modelSelector.disabled);
             }
             
             async validateAndFetchModels(apiKey) {
                 const statusEl = this.elements.apiKeyStatus;
                 const modelSelector = this.elements.modelSelector;
+                
                 if (!apiKey) {
                     statusEl.textContent = ''; statusEl.className = '';
                     modelSelector.innerHTML = '<option>Enter a valid API key first</option>'; modelSelector.disabled = true;
                     this.updateAIButtonStates(false); return;
                 }
+                
                 statusEl.textContent = '...'; statusEl.className = '';
+                
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
                     if (!response.ok) throw new Error('Invalid API Key or network issue.');
+                    
                     const data = await response.json();
                     const supportedModels = data.models
                         .filter(model => model.name.includes('gemini') && model.supportedGenerationMethods.includes('generateContent'))
@@ -298,17 +763,19 @@
                             if (aIsPro && !bIsPro) return -1; if (!aIsPro && bIsPro) return 1;
                             return (a.displayName || a.name).localeCompare(b.displayName || b.name);
                         });
+
                     if (supportedModels.length === 0) throw new Error('No compatible Gemini models found for this key.');
+                    
                     modelSelector.innerHTML = '';
                     supportedModels.forEach(model => {
-                        const option = document.createElement('option');
-                        option.value = model.name;
-                        option.textContent = model.displayName || model.name;
-                        modelSelector.appendChild(option);
+                        const option = document.createElement('option'); option.value = model.name;
+                        option.textContent = model.displayName || model.name; modelSelector.appendChild(option);
                     });
+                    
                     modelSelector.disabled = false;
                     statusEl.textContent = '✓'; statusEl.className = 'success'; statusEl.title = 'API Key Validated';
                     this.updateAIButtonStates(true);
+                    
                 } catch (error) {
                     console.error("API Key Validation Error:", error);
                     modelSelector.innerHTML = '<option>Key validation failed</option>'; modelSelector.disabled = true;
@@ -317,100 +784,482 @@
                 }
             }
 
-            updateAIButtonStates(isEnabled) {
-                const aiButtons = document.querySelectorAll('[data-action="auto-fill-ai"]');
-                aiButtons.forEach(button => {
-                    const card = button.closest('.pdf-card');
+            updateAIButtonStates(isApiKeyValid) {
+                document.querySelectorAll('.pdf-card').forEach(card => {
                     const fileId = card.dataset.id;
                     const fileObj = this.state.files.find(f => f.id === fileId);
                     const hasContext = fileObj && fileObj.contextFiles.length > 0;
-                    button.disabled = !isEnabled || !hasContext;
-                    if (!isEnabled) {
-                        button.title = 'Please enter a valid API key to enable AI.';
-                    } else if (!hasContext) {
-                        button.title = 'Please add at least one context file to enable AI.';
-                    } else {
-                        button.title = 'Synthesize context files with AI to generate JSON.';
+                    // Removed size warning check - let AI processing attempt even with large files
+                    const isDisabled = !isApiKeyValid || !hasContext;
+                    
+                    // Update both AI buttons
+                    card.querySelectorAll('[data-action="auto-fill-ai"], [data-action="ai-fill-and-download"]').forEach(button => {
+                        button.disabled = isDisabled;
+                        
+                        if (!isApiKeyValid) {
+                            button.title = 'Please enter a valid Google AI API key to enable AI processing.';
+                            button.textContent = button.dataset.action === 'ai-fill-and-download' 
+                                ? '🔒 Enter API Key to Enable AI Processing'
+                                : 'Enter API Key First';
+                        } else if (!hasContext) {
+                            button.title = 'Please add at least one supporting document to enable AI processing.';
+                            button.textContent = button.dataset.action === 'ai-fill-and-download' 
+                                ? '📄 Add Supporting Documents First'
+                                : 'Add Documents First';
+                        } else {
+                            button.title = button.dataset.action === 'ai-fill-and-download' 
+                                ? 'Process documents with AI and download completed form.'
+                                : 'Extract data from documents using AI.';
+                            button.textContent = button.dataset.action === 'ai-fill-and-download' 
+                                ? '🚀 Process with AI & Download Completed Form'
+                                : 'Extract Data';
+                        }
+                    });
+                    
+                    // Update manual fill button - always enabled
+                    const manualButton = card.querySelector('[data-action="fill-and-download"]');
+                    if (manualButton) {
+                        manualButton.disabled = false;
+                        manualButton.title = 'Complete PDF using the current JSON data above.';
                     }
                 });
             }
+            
+            async retryWithBackoff(operation, maxRetries = 3) {
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        return await operation();
+                    } catch (error) {
+                        if (attempt === maxRetries) throw error;
+                        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+                        console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+            }
 
-            async handleAutoFill(fileId, card) {
+            async handleAIFillAndDownload(fileId, card) {
+                this.showLoading(true, 'AI processing & filling PDF...');
+                const statusEl = card.querySelector('.filler-status');
+                const aiSuccess = await this.handleAutoFill(fileId, card, true);
+                if (!aiSuccess) {
+                    this.showLoading(false);
+                    return;
+                }
+                this.showStatus(statusEl, "AI generation complete. Now filling PDF...", 'success');
+                await this.handleFillAndDownload(fileId, true);
+                this.showLoading(false);
+            }
+            
+            async handleAutoFill(fileId, card, isChained = false) {
                 const statusEl = card.querySelector('.filler-status');
                 const textarea = card.querySelector('.filler-textarea');
                 const apiKey = this.elements.apiKeyInput.value.trim();
                 const selectedModel = this.elements.modelSelector.value;
-                if (!apiKey || this.elements.modelSelector.disabled) { this.showStatus(statusEl, "Error: Please enter a valid Google AI API Key.", 'error'); return; }
-                const fileObj = this.state.files.find(f => f.id === fileId);
-                if (!fileObj || fileObj.contextFiles.length === 0) { this.showStatus(statusEl, "Error: Please add at least one context file.", 'error'); return; }
                 
-                this.showLoading(true, 'Consulting the Multimodal AI...');
+                if (!apiKey || this.elements.modelSelector.disabled) {
+                    this.showStatus(statusEl, "Error: Please enter a valid Google AI API Key.", 'error'); return false;
+                }
+                const fileObj = this.state.files.find(f => f.id === fileId);
+                if (!fileObj || fileObj.contextFiles.length === 0) {
+                    this.showStatus(statusEl, "Error: Please add at least one context file.", 'error'); return false;
+                }
+                const estimatedSize = await this.calculateRequestSize(fileObj);
+                if (estimatedSize > this.maxRequestSize) {
+                    this.showStatus(statusEl, `Error: Request too large (${this.formatFileSize(estimatedSize)}).`, 'error'); return false;
+                }
+                
+                if (!isChained) this.showLoading(true, 'Synthesizing with AI...');
+                this.showStatus(statusEl, 'Preparing request...', 'warning');
+                
                 try {
-                    const prompt = this.constructAIPrompt();
-                    const apiParts = [{ text: prompt }];
-                    
-                    // Add primary PDF
-                    apiParts.push({ inline_data: { mime_type: "application/pdf", data: await this.arrayBufferToBase64(fileObj.arrayBuffer) } });
-                    // Add all context files
-                    for (const contextFile of fileObj.contextFiles) {
-                        apiParts.push({ inline_data: { mime_type: contextFile.file.type || 'application/octet-stream', data: await this.arrayBufferToBase64(await contextFile.file.arrayBuffer()) } });
-                    }
+                    const result = await this.retryWithBackoff(async () => {
+                        const promptTextarea = card.querySelector('.prompt-textarea');
+                        const prompt = promptTextarea.value.trim() || this.generateEnhancedPrompt(fileObj);
+                        const apiParts = [{ text: prompt }];
+                        
+                        this.showStatus(statusEl, 'Encoding primary PDF...', 'warning');
+                        apiParts.push({ inline_data: { mime_type: "application/pdf", data: await this.arrayBufferToBase64(fileObj.arrayBuffer) } });
+                        
+                        for (let i = 0; i < fileObj.contextFiles.length; i++) {
+                            this.showStatus(statusEl, `Encoding context file ${i + 1}/${fileObj.contextFiles.length}...`, 'warning');
+                            const contextFile = fileObj.contextFiles[i];
+                            apiParts.push({ inline_data: { mime_type: contextFile.file.type || 'application/octet-stream', data: await this.arrayBufferToBase64(await contextFile.file.arrayBuffer()) } });
+                        }
 
-                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
-                    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: apiParts }] }) });
-                    if (!response.ok) { const errorData = await response.json(); throw new Error(`API Error: ${errorData.error.message}`); }
-                    const result = await response.json();
-                    if (!result.candidates || !result.candidates[0].content || !result.candidates[0].content.parts[0].text) { throw new Error("AI response was empty or malformed."); }
+                        this.showStatus(statusEl, 'Sending to AI...', 'warning');
+                        
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
+                        
+                        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+                        
+                        let response;
+                        try {
+                            response = await fetch(endpoint, {
+                                method: 'POST', 
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ 
+                                    contents: [{ parts: apiParts }],
+                                    generationConfig: {
+                                        temperature: 0.1,
+                                        topK: 1,
+                                        topP: 0.8,
+                                        maxOutputTokens: 8192
+                                    }
+                                }), 
+                                signal: controller.signal,
+                                mode: 'cors'
+                            });
+                        } catch (fetchError) {
+                            clearTimeout(timeoutId);
+                            
+                            // Enhanced error handling for common issues
+                            if (fetchError.name === 'TypeError' && fetchError.message.includes('Failed to fetch')) {
+                                throw new Error(`Network Error: Unable to connect to Google AI API. This might be due to:
+• CORS policy blocking the request (try using a different browser or network)
+• Firewall/proxy blocking the connection
+• Internet connectivity issues
+• API endpoint temporarily unavailable
+
+Try: Refresh the page, check your internet connection, or try from a different network.`);
+                            }
+                            throw fetchError;
+                        }
+                        
+                        clearTimeout(timeoutId);
+                        
+                        if (!response.ok) {
+                            let errorData;
+                            try {
+                                errorData = await response.json();
+                            } catch {
+                                errorData = { error: { message: `HTTP ${response.status}: ${response.statusText}` } };
+                            }
+                            
+                            // Handle specific API errors
+                            if (response.status === 403) {
+                                throw new Error(`API Access Denied: ${errorData.error?.message || 'Invalid API key or insufficient permissions'}`);
+                            } else if (response.status === 429) {
+                                throw new Error(`Rate Limited: ${errorData.error?.message || 'Too many requests. Please wait a moment and try again.'}`);
+                            } else if (response.status >= 500) {
+                                throw new Error(`Server Error: ${errorData.error?.message || 'Google AI service temporarily unavailable'}`);
+                            } else {
+                                throw new Error(`API Error (${response.status}): ${errorData.error?.message || 'Unknown error occurred'}`);
+                            }
+                        }
+                        return response.json();
+                    });
+
+                    this.showStatus(statusEl, 'Processing AI response...', 'warning');
+                    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                        throw new Error("AI response was empty or malformed.");
+                    }
+                    
                     const rawResponseText = result.candidates[0].content.parts[0].text;
                     const cleanedJsonText = rawResponseText.replace(/```json\n?|```/g, '').trim();
-                    JSON.parse(cleanedJsonText); // Validate
-                    textarea.value = JSON.stringify(JSON.parse(cleanedJsonText), null, 2);
-                    this.showStatus(statusEl, 'Success! AI has generated the JSON.', 'success');
+                    
+                    // Enhanced JSON parsing with better error handling
+                    let parsedJson;
+                    try {
+                        parsedJson = JSON.parse(cleanedJsonText);
+                    } catch (parseError) {
+                        // Try to fix common JSON issues
+                        const fixedJson = this.attemptJSONFix(cleanedJsonText);
+                        parsedJson = JSON.parse(fixedJson);
+                    }
+                    
+                    // Validate the JSON structure
+                    if (!Array.isArray(parsedJson)) {
+                        throw new Error("AI response must be a JSON array of field objects.");
+                    }
+                    
+                    textarea.value = JSON.stringify(parsedJson, null, 2);
+                    this.showStatus(statusEl, 'Success! AI has generated the JSON. Review and edit if needed.', 'success');
+                    return true;
+                    
                 } catch (error) {
-                    console.error("AI Auto-fill failed:", error); this.showStatus(statusEl, `Error: ${error.message}`, 'error');
+                    console.error("AI Auto-fill failed:", error);
+                    let errorMessage = error.message;
+                    if (error.name === 'AbortError') errorMessage = 'Request timed out. Try reducing file sizes.';
+                    else if (errorMessage.includes('Failed to fetch')) errorMessage = 'Network error. Check connection and try again.';
+                    else if (errorMessage.includes('quota')) errorMessage = 'API quota exceeded. Please check your API limits.';
+                    this.showStatus(statusEl, `Error: ${errorMessage}`, 'error');
+                    return false;
                 } finally {
-                    this.showLoading(false);
+                    if (!isChained) this.showLoading(false);
                 }
             }
             
-            constructAIPrompt() {
-                return `You are a hyper-efficient, programmatic data-mapper. Your ONLY job is to take the provided PRIMARY PDF form and one or more CONTEXT_FILES (which can be images, text, csv, etc.) and generate a single, clean JSON array to fill the PRIMARY PDF's form fields.
+            attemptJSONFix(jsonText) {
+                // Remove any trailing commas
+                let fixed = jsonText.replace(/,(\s*[}\]])/g, '$1');
+                // Ensure proper quotes around field names
+                fixed = fixed.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
+                return fixed;
+            }
+            
+            generateEnhancedPrompt(fileObj) {
+                const detectedFields = fileObj.analysis.fieldDetails;
+                
+                let fieldStructure = "";
+                if (detectedFields.length > 0) {
+                    fieldStructure = `DETECTED FIELDS IN PDF (${detectedFields.length} fields found):
+${detectedFields.map(field => `- "${field.fieldName}" (${field.fieldType})`).join('\n')}
 
-**CRITICAL INSTRUCTIONS:**
-1.  **Identify the Goal:** Your primary goal is to fill out the form fields of the FIRST PDF provided. This is the master document.
-2.  **Synthesize Information:** Analyze ALL other attached files (the CONTEXT_FILES) to find the information needed. You must synthesize data from all sources to get a complete picture.
-3.  **Create JSON:** Create a JSON array where each object represents a form field from the PRIMARY PDF. Each object MUST have two keys: "fieldName" and "value".
-4.  **Map Data:** Map the information from the CONTEXT_FILES to the corresponding PRIMARY PDF fields.
-    *   For checkboxes, the value MUST be a boolean (\`true\` or \`false\`).
-    *   For dropdowns/radios, the value MUST EXACTLY match one of the available options in the PDF field.
-    *   If you cannot find a clear value for a field after checking ALL context files, you MUST use an empty string: \`""\`. Do not omit any fields from the PRIMARY PDF.
+Use these exact field names in your JSON response.`;
+                } else {
+                    fieldStructure = `NO AUTOMATIC FIELD DETECTION - Analyze the PDF visually to identify form fields.`;
+                }
 
-**THE GOLDEN RULE: OUTPUT FORMATTING**
-Your response MUST BE a valid, raw JSON array and NOTHING else.
-- DO NOT include explanations, apologies, or any text besides the JSON.
-- DO NOT use markdown formatting like \`\`\`json.
-- NO EXCEPTIONS. Your entire response must be parsable as JSON, starting with \`[\` and ending with \`]\`.`;
+                return `You are an EXPERT DATA EXTRACTION SPECIALIST. Your mission: Extract data from context files and map it to PDF form fields with 100% accuracy.
+
+**CRITICAL REQUIREMENTS:**
+1. Return ONLY a valid JSON array - no explanations, no markdown, no extra text
+2. Each object must have exactly: {"fieldName": "exact_field_name", "value": "extracted_value"}
+3. Use exact field names from the PDF form
+4. Extract ALL relevant data from context files (images, CSVs, documents, etc.)
+
+**FIELD MAPPING RULES:**
+${fieldStructure}
+
+**DATA EXTRACTION INSTRUCTIONS:**
+- For TEXT fields: Extract exact text from context files
+- For CHECKBOXES: Use true/false based on context data
+- For DROPDOWNS: Use exact option text that matches the form
+- For DATES: Use MM/DD/YYYY format unless PDF shows different format
+- For NUMBERS: Extract numerical values only
+- For SIGNATURES: Use extracted name or "SIGNED" if signature present
+- If no data found for a field: Use "" for text fields, false for checkboxes
+
+**CONTEXT SYNTHESIS:**
+- Combine information from ALL provided files
+- Cross-reference data across multiple sources
+- Use the most recent or complete information when conflicts exist
+- Fill as many fields as possible with available data
+
+**STRICT OUTPUT FORMAT:**
+Your response MUST be a raw JSON array starting with [ and ending with ]. Example:
+[
+  {"fieldName": "applicant_name", "value": "John Smith"},
+  {"fieldName": "email", "value": "john@email.com"},
+  {"fieldName": "agree_terms", "value": true},
+  {"fieldName": "application_date", "value": "03/15/2024"}
+]
+
+RESPOND WITH JSON ONLY - NO OTHER TEXT WHATSOEVER.`;
             }
 
-            async handleFileSelect(files) { if (!files || files.length === 0) return; this.showLoading(true, `Analyzing ${files.length} PDF(s)...`); const filePromises = Array.from(files).map(file => this.processFile(file)).filter(p => p !== null); await Promise.all(filePromises); this.renderPDFGrid(); this.updateUIState(); this.showLoading(false); }
+            // Enhanced JSON Editor Functions
+            validateJSON(fileId, card) {
+                const textarea = card.querySelector('.filler-textarea');
+                const statusEl = card.querySelector('.filler-status');
+                const jsonText = textarea.value.trim();
+                
+                if (!jsonText) {
+                    this.showStatus(statusEl, "JSON area is empty.", 'warning');
+                    return;
+                }
+                
+                try {
+                    const parsed = JSON.parse(jsonText);
+                    if (!Array.isArray(parsed)) {
+                        throw new Error("JSON must be an array of field objects.");
+                    }
+                    
+                    const invalidFields = parsed.filter(item => 
+                        !item || typeof item.fieldName !== 'string' || !item.hasOwnProperty('value')
+                    );
+                    
+                    if (invalidFields.length > 0) {
+                        throw new Error(`${invalidFields.length} invalid field objects found. Each must have 'fieldName' and 'value' properties.`);
+                    }
+                    
+                    this.showStatus(statusEl, `✓ Valid JSON with ${parsed.length} fields.`, 'success');
+                } catch (error) {
+                    this.showStatus(statusEl, `JSON Error: ${error.message}`, 'error');
+                }
+            }
+            
+            formatJSON(fileId, card) {
+                const textarea = card.querySelector('.filler-textarea');
+                const statusEl = card.querySelector('.filler-status');
+                const jsonText = textarea.value.trim();
+                
+                if (!jsonText) {
+                    this.showStatus(statusEl, "Nothing to format.", 'warning');
+                    return;
+                }
+                
+                try {
+                    const parsed = JSON.parse(jsonText);
+                    textarea.value = JSON.stringify(parsed, null, 2);
+                    this.showStatus(statusEl, "JSON formatted successfully.", 'success');
+                } catch (error) {
+                    this.showStatus(statusEl, `Cannot format invalid JSON: ${error.message}`, 'error');
+                }
+            }
+            
+            addJSONField(fileId, card) {
+                const textarea = card.querySelector('.filler-textarea');
+                let current = textarea.value.trim();
+                
+                const newField = {
+                    fieldName: "new_field_name",
+                    value: "new_value"
+                };
+                
+                if (!current) {
+                    textarea.value = JSON.stringify([newField], null, 2);
+                } else {
+                    try {
+                        const parsed = JSON.parse(current);
+                        if (Array.isArray(parsed)) {
+                            parsed.push(newField);
+                            textarea.value = JSON.stringify(parsed, null, 2);
+                        }
+                    } catch (error) {
+                        // If current JSON is invalid, start fresh
+                        textarea.value = JSON.stringify([newField], null, 2);
+                    }
+                }
+                
+                const statusEl = card.querySelector('.filler-status');
+                this.showStatus(statusEl, "Field added. Edit the field name and value.", 'success');
+            }
+
+            async handleFileSelect(files) {
+                if (!files || files.length === 0) return;
+                
+                this.clearError(); // Clear any previous errors
+                this.showLoading(true, `Analyzing ${files.length} PDF(s)...`);
+                
+                const filePromises = Array.from(files)
+                    .filter(file => {
+                        if (!file.type.match(/^application\/pdf$/i)) {
+                            this.showError(`${file.name} is not a valid PDF file. Skipping.`);
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(file => this.processFile(file));
+                    
+                const results = await Promise.allSettled(filePromises);
+                
+                // Check for any failed processing
+                const failures = results.filter(result => result.status === 'rejected');
+                if (failures.length > 0) {
+                    console.error("File processing failures:", failures);
+                    this.showError(`Failed to process ${failures.length} file(s). Check console for details.`);
+                }
+                
+                this.renderPDFGrid(); 
+                this.updateUIState(); 
+                this.showLoading(false);
+            }
+
             processFile(file) {
-                if (!file.type.match(/^application\/pdf$/i)) { this.showError(`${file.name} is not a valid PDF file. Skipping.`); return null; }
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     const fileReader = new FileReader();
                     fileReader.onload = async (e) => {
                         try {
-                            const originalBuffer = e.target.result; const bufferForPdfLib = originalBuffer.slice(0); const bufferForPdfJs = new Uint8Array(originalBuffer);
-                            const pdf = await pdfjsLib.getDocument({ data: bufferForPdfJs }).promise; const thumbnailUrl = await this.generatePDFThumbnail(pdf);
-                            const fileObj = { id: `${file.name}-${file.size}-${Date.now()}`, file, arrayBuffer: bufferForPdfLib, contextFiles: [], original: { pages: pdf.numPages, thumbnailUrl }, analysis: null, };
-                            fileObj.analysis = await this.performPDFAnalysis(pdf); this.state.files.push(fileObj); resolve();
-                        } catch (error) { console.error(error); this.showError(`Could not analyze PDF: ${file.name}.`); resolve(); }
+                            const originalBuffer = e.target.result;
+                            const bufferForPdfLib = originalBuffer.slice(0);
+                            const bufferForPdfJs = new Uint8Array(originalBuffer);
+                            
+                            console.log(`Processing PDF: ${file.name}`);
+                            const pdf = await pdfjsLib.getDocument({ data: bufferForPdfJs }).promise;
+                            
+                            const fileObj = {
+                                id: `${file.name}-${file.size}-${Date.now()}`, 
+                                file, 
+                                arrayBuffer: bufferForPdfLib,
+                                contextFiles: [], 
+                                original: { pages: pdf.numPages }, 
+                                analysis: null,
+                            };
+                            
+                            console.log(`Analyzing PDF fields for: ${file.name}`);
+                            fileObj.analysis = await this.performEnhancedPDFAnalysis(pdf);
+                            console.log(`Found ${fileObj.analysis.fieldDetails.length} fields in ${file.name}`);
+                            
+                            this.state.files.push(fileObj); 
+                            resolve();
+                        } catch (error) {
+                            console.error(`Error processing ${file.name}:`, error); 
+                            reject(new Error(`Could not analyze PDF: ${file.name}. ${error.message}`));
+                        }
                     };
-                    fileReader.onerror = () => { this.showError(`Could not read ${file.name}`); resolve(); };
+                    fileReader.onerror = () => { 
+                        const error = new Error(`Could not read ${file.name}`);
+                        reject(error);
+                    };
                     fileReader.readAsArrayBuffer(file);
                 });
             }
-            async performPDFAnalysis(pdfDocument) { const analysis = { fieldDetails: [] }; for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) { const page = await pdfDocument.getPage(pageNum); const annotations = await page.getAnnotations(); annotations.filter(ann => ann.subtype === 'Widget' && ann.fieldName).forEach(field => { if (!analysis.fieldDetails.some(f => f.fieldName === field.fieldName)) { analysis.fieldDetails.push({ fieldName: field.fieldName }); } }); } return analysis; }
-            async generatePDFThumbnail(pdf) { try { const page = await pdf.getPage(1); const viewport = page.getViewport({ scale: 0.5 }); const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); canvas.width = viewport.width; canvas.height = viewport.height; await page.render({ canvasContext: ctx, viewport }).promise; return canvas.toDataURL('image/jpeg'); } catch (error) { console.error('Error generating thumbnail:', error); return null; } }
+
+            async performEnhancedPDFAnalysis(pdfDocument) {
+                const analysis = { 
+                    fieldDetails: [],
+                    totalPages: pdfDocument.numPages,
+                    hasFormFields: false
+                };
+                
+                console.log(`Analyzing ${pdfDocument.numPages} pages for form fields...`);
+                
+                for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+                    try {
+                        const page = await pdfDocument.getPage(pageNum);
+                        const annotations = await page.getAnnotations();
+                        
+                        console.log(`Page ${pageNum}: Found ${annotations.length} annotations`);
+                        
+                        const formFields = annotations.filter(ann => {
+                            const isWidget = ann.subtype === 'Widget';
+                            const hasFieldName = ann.fieldName && ann.fieldName.trim() !== '';
+                            return isWidget && hasFieldName;
+                        });
+                        
+                        console.log(`Page ${pageNum}: Found ${formFields.length} form fields`);
+                        
+                        formFields.forEach(field => {
+                            const fieldName = field.fieldName.trim();
+                            // Avoid duplicates
+                            if (!analysis.fieldDetails.some(f => f.fieldName === fieldName)) {
+                                analysis.fieldDetails.push({
+                                    fieldName: fieldName,
+                                    fieldType: this.mapFieldType(field.fieldType),
+                                    page: pageNum,
+                                    rawType: field.fieldType,
+                                    multiline: field.multiLine || false,
+                                    required: field.required || false
+                                });
+                            }
+                        });
+                        
+                    } catch (pageError) {
+                        console.warn(`Error analyzing page ${pageNum}:`, pageError);
+                    }
+                }
+                
+                analysis.hasFormFields = analysis.fieldDetails.length > 0;
+                console.log(`Analysis complete: ${analysis.fieldDetails.length} unique fields found`);
+                
+                return analysis;
+            }
+
+            mapFieldType(fieldType) {
+                const typeMap = { 
+                    'Tx': 'text', 
+                    'Btn': 'button', 
+                    'Ch': 'choice', 
+                    'Sig': 'signature' 
+                };
+                return typeMap[fieldType] || 'unknown';
+            }
             
             updateUIState() {
                 const hasFiles = this.state.files.length > 0;
@@ -421,61 +1270,286 @@ Your response MUST BE a valid, raw JSON array and NOTHING else.
             renderPDFGrid() {
                 const grid = this.elements.pdfGrid;
                 grid.innerHTML = '';
+                
                 this.state.files.forEach(fileObj => {
                     const card = document.createElement('div');
-                    card.className = `pdf-card`; card.dataset.id = fileObj.id;
+                    card.className = 'pdf-card'; 
+                    card.dataset.id = fileObj.id;
+                    
+                    // Enhanced field analysis display
+                    const fieldListHtml = fileObj.analysis.fieldDetails.length > 0 
+                        ? fileObj.analysis.fieldDetails.map(field => 
+                            `<div class="field-item">${field.fieldName} (${field.fieldType})</div>`
+                          ).join('')
+                        : '<div class="field-item">No fillable fields detected</div>';
+                    
                     card.innerHTML = `
                         <div class="pdf-info">
                             <h3 class="pdf-filename">${fileObj.file.name}</h3>
-                            <p class="pdf-stats">${fileObj.original.pages} pages | ${fileObj.analysis.fieldDetails.length} fillable fields</p>
+                            <p class="pdf-stats">${fileObj.original.pages} pages | ${fileObj.analysis.fieldDetails.length} fillable fields | ${this.formatFileSize(fileObj.file.size)}</p>
+                            
+                            <div class="analysis-details">
+                                <strong>Detected Form Fields:</strong>
+                                <div class="field-list">${fieldListHtml}</div>
+                            </div>
 
                             <div class="ai-filler-section">
-                                <span class="step-label">Step 1: Add Context Files</span>
+                                <span class="step-label">Step 1: Add Supporting Documents</span>
                                 <div class="context-drop-zone">
-                                    <p>Drag & drop supporting files here (images, other PDFs, CSVs, etc.)</p>
-                                    <label for="context-input-${fileObj.id}" class="btn">Browse Files</label>
+                                    <p>Add context files containing the data to extract (images, documents, CSVs, etc.)</p>
+                                    <label for="context-input-${fileObj.id}" class="btn btn-secondary">Browse Files</label>
                                     <input type="file" id="context-input-${fileObj.id}" data-action="browse-context-files" multiple class="hidden">
                                 </div>
-                                <ul class="context-file-list" id="context-file-list-${fileObj.id}"><li>No context files added yet.</li></ul>
+                                <ul class="context-file-list" id="context-file-list-${fileObj.id}"><li>No supporting documents added yet.</li></ul>
+                            </div>
+
+                            <div class="prompt-editor">
+                                <span class="step-label">Step 2: AI Processing Instructions (Optional)</span>
+                                <textarea class="prompt-textarea" placeholder="Loading AI instructions..."></textarea>
                             </div>
 
                             <div class="pdf-filler-section">
-                                <span class="step-label">Step 2: Generate JSON</span>
-                                <button class="btn btn-ai" data-action="auto-fill-ai" disabled>✨ Synthesize with AI</button>
-                                <textarea class="filler-textarea" placeholder="The AI-generated JSON will appear here..."></textarea>
+                                <span class="step-label">Step 3: AI Processing & Form Completion</span>
+                                
+                                <div style="margin-bottom: 16px;">
+                                    <button class="btn btn-ai" data-action="ai-fill-and-download" disabled style="width: 100%; margin-bottom: 8px; font-size: 1.1em; padding: 14px;">🚀 Process with AI & Download Completed Form</button>
+                                    <p style="font-size: 0.85em; color: var(--secondary-color); text-align: center; margin: 0;">One-click: AI processes your documents and delivers the completed PDF</p>
+                                </div>
+                                
+                                <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                        <span style="font-size: 0.9em; color: var(--secondary-color);">Advanced: Manual Review Process</span>
+                                        <hr style="flex: 1; border: none; border-top: 1px solid var(--border-color);">
+                                    </div>
+                                    
+                                    <div class="json-editor-section">
+                                        <div class="json-editor-header">
+                                            <span style="font-weight: 500;">Extracted Data (JSON Format)</span>
+                                            <div class="json-editor-actions">
+                                                <button class="btn btn-secondary" data-action="auto-fill-ai" disabled title="Extract data with AI">Extract Data</button>
+                                                <button class="btn btn-secondary" data-action="validate-json" title="Validate JSON">Validate</button>
+                                                <button class="btn btn-secondary" data-action="format-json" title="Format JSON">Format</button>
+                                                <button class="btn btn-secondary" data-action="add-field" title="Add new field">+ Field</button>
+                                            </div>
+                                        </div>
+                                        <textarea class="filler-textarea" placeholder="Extracted data will appear here...
+
+Example format:
+[
+  {\"fieldName\": \"applicant_name\", \"value\": \"John Smith\"},
+  {\"fieldName\": \"email\", \"value\": \"john@email.com\"},
+  {\"fieldName\": \"agree_terms\", \"value\": true}
+]
+
+Click 'Extract Data' to populate this automatically, or add fields manually."></textarea>
+                                    </div>
+                                    
+                                    <div style="margin-top: 12px;">
+                                        <button class="btn" data-action="fill-and-download" style="background-color: var(--accent-success); color: white; width: 100%;">Complete PDF with Current Data</button>
+                                    </div>
+                                </div>
+                                
                                 <div class="filler-status"></div>
                             </div>
                             
-                            <div style="margin-top: 16px;">
-                               <span class="step-label">Step 3: Create Filled PDF</span>
-                               <button class="btn" data-action="fill-and-download" style="background-color: var(--accent-success); color: white; width: 100%;">Download Filled PDF</button>
-                            </div>
-
                             <div style="margin-top: 24px; text-align: center;">
                                 <button data-action="remove-case" class="btn" style="background: transparent; color: var(--accent-error); border: 1px solid var(--accent-error);">Remove Case File</button>
                             </div>
                         </div>
                     `;
                     grid.appendChild(card);
+                    
+                    // Set the enhanced prompt
+                    card.querySelector('.prompt-textarea').value = this.generateEnhancedPrompt(fileObj);
                     this.renderContextFileList(fileObj.id);
                 });
                 this.updateAIButtonStates(!this.elements.modelSelector.disabled);
             }
+
+            async handleFillAndDownload(fileId, isChained = false) {
+                if (!isChained) this.showLoading(true, 'Creating filled PDF...');
+                const card = this.elements.pdfGrid.querySelector(`[data-id="${fileId}"]`);
+                const statusEl = card.querySelector('.filler-status');
+                
+                try {
+                    const fileObj = this.state.files.find(f => f.id === fileId);
+                    const textarea = card.querySelector('.filler-textarea');
+                    const jsonText = textarea.value.trim();
+                    
+                    if (!jsonText) {
+                        // Provide helpful guidance based on whether they have context files
+                        const fileObj = this.state.files.find(f => f.id === fileId);
+                        const hasContextFiles = fileObj && fileObj.contextFiles.length > 0;
+                        const hasApiKey = this.elements.apiKeyInput.value.trim() && !this.elements.modelSelector.disabled;
+                        
+                        if (!hasContextFiles) {
+                            throw new Error("No data to process. Please add supporting documents first, then click 'Extract Data' to populate the form fields.");
+                        } else if (!hasApiKey) {
+                            throw new Error("No data extracted yet. Please enter your Google AI API key, then click 'Extract Data' to process your documents.");
+                        } else {
+                            throw new Error("No data extracted yet. Click 'Extract Data' button to process your documents with AI, or add fields manually using the '+ Field' button.");
+                        }
+                    }
+                    
+                    let data;
+                    try { 
+                        data = JSON.parse(jsonText); 
+                    } catch (e) { 
+                        throw new Error(`Invalid JSON format: ${e.message}. Use the Validate button to check your JSON.`); 
+                    }
+                    
+                    if (!Array.isArray(data)) {
+                        throw new Error("JSON data must be a top-level array []. Each item should be {\"fieldName\": \"name\", \"value\": \"value\"}.");
+                    }
+                    
+                    if (data.length === 0) {
+                        throw new Error("JSON array is empty. Add at least one field with the + Field button or generate with AI.");
+                    }
+
+                    this.showStatus(statusEl, 'Loading PDF form...', 'warning');
+                    const { PDFDocument } = PDFLib;
+                    const pdfDoc = await PDFDocument.load(fileObj.arrayBuffer);
+                    const form = pdfDoc.getForm();
+                    
+                    let fieldsProcessed = 0;
+                    let fieldsSkipped = 0;
+                    
+                    this.showStatus(statusEl, 'Filling form fields...', 'warning');
+                    
+                    data.forEach((fieldData, index) => {
+                        if (!fieldData || typeof fieldData.fieldName !== 'string') {
+                            console.warn(`Skipping invalid field data at index ${index}:`, fieldData);
+                            fieldsSkipped++;
+                            return;
+                        }
+                        
+                        try {
+                            const formField = form.getField(fieldData.fieldName);
+                            if (!formField) {
+                                console.warn(`Field '${fieldData.fieldName}' not found in PDF form`);
+                                fieldsSkipped++;
+                                return;
+                            }
+                            
+                            const value = fieldData.value;
+                            
+                            if (formField instanceof PDFLib.PDFTextField) {
+                                formField.setText(String(value || ''));
+                                fieldsProcessed++;
+                            } else if (formField instanceof PDFLib.PDFCheckBox) { 
+                                if (value === true || value === 'true' || value === 1 || value === '1') {
+                                    formField.check();
+                                } else {
+                                    formField.uncheck();
+                                }
+                                fieldsProcessed++;
+                            } else if (formField instanceof PDFLib.PDFDropdown && value) {
+                                formField.select(String(value));
+                                fieldsProcessed++;
+                            } else if (formField instanceof PDFLib.PDFRadioGroup && value) {
+                                formField.select(String(value));
+                                fieldsProcessed++;
+                            } else {
+                                console.warn(`Unsupported field type for '${fieldData.fieldName}'`);
+                                fieldsSkipped++;
+                            }
+                        } catch (fieldError) { 
+                            console.warn(`Could not fill field '${fieldData.fieldName}': ${fieldError.message}`); 
+                            fieldsSkipped++;
+                        }
+                    });
+                    
+                    this.showStatus(statusEl, 'Generating PDF file...', 'warning');
+                    const pdfBytes = await pdfDoc.save();
+                    const filledBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
+                    const newFileName = fileObj.file.name.replace('.pdf', `-filled-${timestamp}.pdf`);
+                    
+                    this.triggerDownload(URL.createObjectURL(filledBlob), newFileName);
+                    
+                    const resultMessage = `PDF filled successfully! Processed: ${fieldsProcessed}, Skipped: ${fieldsSkipped}`;
+                    this.showStatus(statusEl, resultMessage, 'success');
+                    
+                } catch (error) {
+                    console.error("PDF filling failed:", error);
+                    this.showStatus(statusEl, `Error: ${error.message}`, 'error');
+                } finally {
+                    if (!isChained) this.showLoading(false);
+                }
+            }
+
+            async arrayBufferToBase64(buffer) {
+                let binary = ''; 
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) { 
+                    binary += String.fromCharCode(bytes[i]); 
+                }
+                return window.btoa(binary);
+            }
             
-            // All other helper methods from previous versions are included below, unminified, for completeness
-            async arrayBufferToBase64(buffer) { let binary = ''; const bytes = new Uint8Array(buffer); const len = bytes.byteLength; for (let i = 0; i < len; i++) { binary += String.fromCharCode(bytes[i]); } return window.btoa(binary); }
-            async handleGetFillableJSON(fileId) { /* Logic remains same as previous versions */ }
-            async handleFillAndDownload(fileId) { /* Logic remains same as previous versions */ }
-            mapFieldType(fieldType) { /* Logic remains same as previous versions */ }
-            removePDF(fileId) { this.state.files = this.state.files.filter(f => f.id !== fileId); this.renderPDFGrid(); this.updateUIState(); }
-            resetApplication() { if (this.state.files.length > 0 && !confirm('Are you sure? This will clear all case files.')) return; this.state = { files: [] }; this.elements.fileInput.value = ''; this.renderPDFGrid(); this.updateUIState(); }
-            showError(message) { const el = this.elements.errorMessage; el.textContent = message; el.style.display = 'block'; setTimeout(() => { el.style.display = 'none'; el.textContent = ''; }, 5000); }
-            showStatus(element, message, type = 'info') { element.textContent = message; element.className = `filler-status ${type}`; setTimeout(() => { if (element.textContent === message) { element.textContent = ''; element.className = 'filler-status'; } }, 5000); }
-            showLoading(show, text = 'Processing...') { const el = this.elements.loadingOverlay; this.elements.loadingText.textContent = text; el.classList.toggle('visible', show); }
+            triggerDownload(href, filename) {
+                const link = document.createElement('a');
+                link.href = href; 
+                link.download = filename;
+                document.body.appendChild(link); 
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(href), 1000);
+            }
+
+            removePDF(fileId) {
+                this.state.files = this.state.files.filter(f => f.id !== fileId);
+                this.renderPDFGrid(); 
+                this.updateUIState();
+            }
+
+            resetApplication() {
+                if (this.state.files.length > 0 && !confirm('Are you sure? This will clear all case files.')) return;
+                this.state = { files: [] };
+                this.elements.fileInput.value = '';
+                this.clearError();
+                this.renderPDFGrid(); 
+                this.updateUIState();
+            }
+
+            showError(message) {
+                const el = this.elements.errorMessage;
+                el.textContent = message;
+                el.classList.remove('hidden');
+                setTimeout(() => this.clearError(), 8000);
+            }
+            
+            clearError() {
+                const el = this.elements.errorMessage;
+                el.textContent = '';
+                el.classList.add('hidden');
+            }
+
+            showStatus(element, message, type = 'info') {
+                element.textContent = message;
+                element.className = `filler-status ${type}`;
+                
+                // Clear success/info messages after delay, keep errors visible longer
+                const delay = type === 'error' ? 10000 : 5000;
+                setTimeout(() => {
+                    if (element.textContent === message) {
+                        element.textContent = ''; 
+                        element.className = 'filler-status';
+                    }
+                }, delay);
+            }
+
+            showLoading(show, text = 'Processing...') {
+                const el = this.elements.loadingOverlay;
+                this.elements.loadingText.textContent = text;
+                el.classList.toggle('visible', show);
+            }
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            window.pdfFiller = new PDFFiller();
+        document.addEventListener('DOMContentLoaded', () => { 
+            window.pdfFiller = new PDFFiller(); 
         });
     </script>
 </body>
