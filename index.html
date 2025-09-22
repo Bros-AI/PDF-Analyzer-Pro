@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Analyzer Pro - Structure, Text & Fields Analysis</title>
-    <meta name="description" content="A powerful, 100% client-side PDF analyzer using pure browser APIs. No uploads, instant analysis. Extract structure, text, and form fields with zero compatibility issues.">
-    <meta name="keywords" content="pdf analyzer, pdf parser, pdf fields extractor, analyze pdf online, pdf form fields, client-side pdf, bros ai">
-    <link rel="canonical" href="https://bros-ai.github.io/pdf-analyzer-pro/">
-    <!-- PDF.js for PDF parsing -->
+    <title>PDF Form Filler from JSON | PDF Analyzer Pro</title>
+    <meta name="description" content="A powerful, 100% client-side tool to fill PDF forms using JSON data. Analyze any fillable PDF to generate a strict JSON template, then paste your data to create a completed, downloadable PDF. Secure, private, and perfect for automation.">
+    <meta name="keywords" content="pdf filler, json to pdf, fill pdf from json, pdf automation, pdf form filler, fillable pdf, client-side pdf tool, pdf-lib, bros ai">
+    <link rel="canonical" href="https://bros-ai.github.io/PDF-Analyzer-Pro/">
+    
+    <!-- PDF.js for PDF parsing & analysis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- JSZip for creating ZIP files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- pdf-lib for PDF creation & modification -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -30,7 +32,7 @@
         /* --- Header & Typography --- */
         .header { text-align: center; margin-bottom: 32px; }
         .header h1 { font-size: 2.8em; font-weight: 700; margin-bottom: 8px; }
-        .header p { font-size: 1.2em; color: var(--secondary-color); }
+        .header p { font-size: 1.2em; color: var(--secondary-color); max-width: 800px; margin: 0 auto; }
         .section-title { font-size: 1.5em; font-weight: 500; color: var(--on-surface-color); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .main-content { flex-grow: 1; }
         /* --- Card & Layout --- */
@@ -52,24 +54,8 @@
         .upload-container h2 { font-size: 1.5em; margin-top: 16px; }
         .upload-container p { color: var(--secondary-color); margin: 8px 0 16px; }
         #file-input { display: none; }
-        /* --- Controls Section --- */
-        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; margin-bottom: 24px; }
-        .control-group h3 { font-size: 1.1em; font-weight: 500; margin-bottom: 12px; }
-        .input-group { display: flex; gap: 16px; margin-bottom: 16px; }
-        .input-field { flex: 1; }
-        .input-field label { display: block; font-size: 0.875em; color: var(--secondary-color); margin-bottom: 4px; }
-        .input-field input, .input-field select {
-        width: 100%; padding: 10px 12px; font-size: 1em; border: 1px solid var(--border-color);
-        border-radius: 6px; background-color: var(--background-color); transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
-        }
-        .input-field input:focus, .input-field select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px #d2e3fc; }
-        .checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9em; user-select: none; }
-        .checkbox-label input[type="checkbox"] { display: none; }
-        .checkmark { width: 18px; height: 18px; border: 2px solid var(--secondary-color); border-radius: 4px; position: relative; }
-        .checkbox-label input:checked + .checkmark { background-color: var(--primary-color); border-color: var(--primary-color); }
-        .checkbox-label input:checked + .checkmark::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 14px; }
+        /* --- Controls & Buttons --- */
         .action-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
-        /* --- Buttons --- */
         .btn {
         display: inline-flex; align-items: center; justify-content: center; font-weight: 500;
         font-size: 1em; padding: 10px 24px; border-radius: 8px; border: 1px solid transparent;
@@ -83,47 +69,33 @@
         .btn-success:hover { background-color: #1a7f37; box-shadow: var(--shadow-1); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.7; }
         /* --- PDF Queue --- */
-        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .pdf-grid.item-count-1 { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+        .pdf-grid.item-count-2 { grid-template-columns: 1fr 1fr; max-width: 1100px; margin: 0 auto; }
+
         .pdf-card {
         background: var(--surface-color); border-radius: var(--border-radius); overflow: hidden;
         box-shadow: var(--shadow-1); display: flex; flex-direction: column;
         transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-        border-left: 4px solid transparent;
+        border-left: 4px solid var(--accent-success);
         }
-        .status-border-pending { border-left-color: var(--accent-warning); }
-        .status-border-processing { border-left-color: var(--primary-color); }
-        .status-border-done { border-left-color: var(--accent-success); }
-        .status-border-error { border-left-color: var(--accent-error); }
         .pdf-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
         .pdf-thumbnail { width: 100%; height: 160px; background-color: var(--background-color); display: flex; align-items: center; justify-content: center; }
         .pdf-thumbnail img { width: 100%; height: 100%; object-fit: contain; }
-        .pdf-thumbnail-placeholder { display: flex; flex-direction: column; align-items: center; color: var(--secondary-color); }
-        .pdf-thumbnail-placeholder svg { width: 48px; height: 48px; margin-bottom: 8px; }
         .pdf-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
         .pdf-filename { font-weight: 500; font-size: 0.9em; word-break: break-all; margin-bottom: 4px; }
         .pdf-stats { font-size: 0.8em; color: var(--secondary-color); margin-bottom: 12px; }
-        .status-badge { display: inline-block; padding: 2px 8px; font-size: 0.75em; font-weight: 500; border-radius: 12px; margin-bottom: 12px; text-transform: capitalize; }
-        .status-pending { background-color: #feefc3; color: #b06000; }
-        .status-done { background-color: #e6f4ea; color: #1e8e3e; }
-        .status-error { background-color: #fce8e6; color: #c5221f; }
-        .pdf-actions { display: flex; gap: 8px; margin-top: auto; }
+        .pdf-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color);}
         .pdf-actions .btn { flex: 1; padding: 6px 8px; font-size: 0.8em; }
-        /* --- Analysis Results --- */
-        .pdf-results { font-size: 0.85em; padding: 10px; background-color: #f1f3f4; border-radius: 6px; margin-bottom: 12px; }
-        .pdf-results p { margin: 0 0 4px 0; }
-        .analysis-summary { color: var(--accent-success); font-weight: 700; }
-        .pdf-processing-state { margin-bottom: 12px; }
-        .progress-bar { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; }
-        .progress-bar-fill { width: 0%; height: 100%; background-color: var(--primary-color); transition: width 0.1s linear; }
-        .progress-text { font-size: 0.8em; color: var(--secondary-color); margin-top: 4px; text-align: center; }
-        /* --- Total Stats --- */
-        .total-stats-section { text-align: center; padding: 20px; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-top: 24px; }
-        .total-stats-section h3 { margin-bottom: 16px; font-weight: 500; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .stat-item { padding: 10px; background-color: var(--background-color); border-radius: 8px; }
-        .stat-label { display: block; font-size: 0.8em; color: var(--secondary-color); margin-bottom: 4px; }
-        .stat-value { font-size: 1.2em; font-weight: 700; }
-        .stat-item.fields .stat-value { color: var(--accent-success); }
+        /* --- PDF Filling Section --- */
+        .pdf-filler-section { margin-top: 16px; margin-bottom: 16px; }
+        .pdf-filler-section h4 { font-size: 0.9em; font-weight: 500; margin-bottom: 8px; text-align: center; }
+        .pdf-filler-section textarea { width: 100%; min-height: 120px; font-family: monospace; font-size: 0.85em; resize: vertical; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--background-color); margin-top: 8px;}
+        .pdf-filler-section textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px #d2e3fc; }
+        .pdf-filler-section .btn { width: 100%; margin-top: 8px; }
+        .filler-status { font-size: 0.8em; text-align: center; margin-top: 4px; height: 1.2em; font-weight: 500; }
+        .filler-status.success { color: var(--accent-success); }
+        .filler-status.error { color: var(--accent-error); }
         /* --- Footer --- */
         .app-footer { border-top: 1px solid var(--border-color); padding: 40px 0 20px; margin-top: 64px; color: var(--secondary-color); }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; }
@@ -134,26 +106,16 @@
         .footer-links a { color: var(--secondary-color); transition: color var(--transition-speed); }
         .footer-links a:hover { color: var(--primary-color); }
         /* --- Loading & Error --- */
-        .error-message { color: var(--accent-error); font-weight: 500; text-align: center; margin-top: 16px; }
+        .error-message { color: var(--accent-error); font-weight: 500; text-align: center; }
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; text-align: center; padding: 20px; }
         .loading-overlay.visible { display: flex; }
         .spinner { width: 48px; height: 48px; border: 5px solid #d2e3fc; border-bottom-color: var(--primary-color); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-        .loading-overlay p { margin-top: 16px; font-size: 1.2em; font-weight: 500; color: var(--on-surface-color); }
         .loading-content { max-width: 600px; }
         .author-chat-panel { background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-2); margin: 20px 0; display: flex; gap: 16px; align-items: flex-start; text-align: left; }
         .author-avatar { width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0; }
         .chat-bubble p { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; }
         .chat-bubble p:last-child { margin-bottom: 0; }
-        .ps-text { font-style: italic; color: var(--secondary-color); font-size: 0.85em; }
         .main-progress-text { font-size: 1.1em; margin-top: 20px; }
-        .share-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); }
-        .share-section p { margin-bottom: 12px; color: var(--secondary-color); }
-        .share-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 0.9em; transition: all var(--transition-speed); }
-        .share-btn.twitter { background-color: #1da1f2; color: white; }
-        .share-btn.linkedin { background-color: #0077b5; color: white; }
-        .share-btn svg { width: 16px; height: 16px; fill: currentColor; }
-        .share-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
     </style>
@@ -162,8 +124,8 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <h1>PDF Analyzer Pro</h1>
-            <p>Advanced, secure, and 100% private PDF analysis using your browser's built-in power.</p>
+            <h1>PDF Analyzer & Filler Pro</h1>
+            <p>Generate a JSON map from a PDF's form fields, fill it with your data, and download the completed document instantly. 100% private and secure.</p>
         </header>
 
         <!-- Main Content -->
@@ -174,71 +136,21 @@
                     <div class="upload-icon" aria-hidden="true">
                         <svg height="48px" viewBox="0 0 24 24" width="48px" aria-label="Document upload icon"><path d="M0 0h24v24H0z" fill="none"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
                     </div>
-                    <h2>Drag & drop PDF files here</h2>
+                    <h2>Drag & drop a fillable PDF here</h2>
                     <p>or</p>
-                    <label for="file-input" class="btn btn-primary">Browse Files</label>
+                    <label for="file-input" class="btn btn-primary">Browse File</label>
                     <input type="file" id="file-input" accept=".pdf,application/pdf" multiple aria-label="Select PDF files">
+                    <div id="error-message" class="error-message" role="alert" style="margin-top:20px;"></div>
                 </div>
-            </section>
-
-            <!-- Controls & Actions Section -->
-            <section class="controls-section card" id="controls-section" style="display: none;">
-                <div class="controls-grid">
-                    <div class="control-group">
-                        <h3 class="control-title">Analysis Options</h3>
-                        <label class="checkbox-label"><input type="checkbox" id="extract-text" checked><span class="checkmark"></span> Extract all text content</label>
-                        <label class="checkbox-label"><input type="checkbox" id="extract-fields" checked><span class="checkmark"></span> Analyze form fields</label>
-                        <label class="checkbox-label"><input type="checkbox" id="extract-structure" checked><span class="checkmark"></span> Document structure analysis</label>
-                        <label class="checkbox-label"><input type="checkbox" id="extract-images" checked><span class="checkmark"></span> Extract image information</label>
-                    </div>
-                    <div class="control-group">
-                        <h3 class="control-title">Output Format</h3>
-                        <div class="input-group">
-                            <div class="input-field">
-                                <label for="output-format">Report Format</label>
-                                <select id="output-format">
-                                    <option value="json" selected>JSON (AI-friendly)</option>
-                                    <option value="detailed-json">Detailed JSON</option>
-                                    <option value="markdown">Markdown Report</option>
-                                </select>
-                            </div>
-                        </div>
-                        <label class="checkbox-label"><input type="checkbox" id="include-preview"><span class="checkmark"></span> Include page previews</label>
-                    </div>
-                </div>
-                <div class="total-stats-section" id="total-stats-section" style="display: none;">
-                    <h3>Analysis Complete!</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item"><span class="stat-label">Total Pages</span><span class="stat-value" id="total-pages">0</span></div>
-                        <div class="stat-item fields"><span class="stat-label">Form Fields</span><span class="stat-value" id="total-fields">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Text Elements</span><span class="stat-value" id="total-text-elements">0</span></div>
-                    </div>
-                    <div class="share-section">
-                        <p>Found this useful? Share it with your colleagues!</p>
-                        <div class="share-buttons">
-                            <a href="https://twitter.com/intent/tweet?text=I%20just%20used%20this%20powerful,%20free%20PDF%20analyzer!%20Extracts%20structure,%20text%20and%20form%20fields.%20100%25%20private.%20Check%20it%20out:&url=https://bros-ai.github.io/pdf-analyzer-pro/" target="_blank" class="share-btn twitter">
-                                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                Share on X
-                            </a>
-                            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://bros-ai.github.io/pdf-analyzer-pro/" target="_blank" class="share-btn linkedin">
-                                <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                                Share on LinkedIn
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button id="analyze-btn" class="btn btn-primary" disabled>Analyze All PDFs</button>
-                    <button id="download-reports-btn" class="btn btn-success" style="display: none;">Download Reports (.zip)</button>
-                    <button id="reset-btn" class="btn btn-secondary">Reset</button>
-                </div>
-                <div id="error-message" class="error-message" role="alert"></div>
             </section>
 
             <!-- PDF Queue Section -->
             <section class="pdf-queue-section" id="pdf-queue-section" style="display: none;">
-                <h2 class="section-title">PDF Queue (<span id="pdf-count">0</span>)</h2>
+                <h2 class="section-title">Your PDF Files (<span id="pdf-count">0</span>)</h2>
                 <div class="pdf-grid" id="pdf-grid"></div>
+                <div class="action-buttons">
+                    <button id="reset-btn" class="btn btn-secondary">Reset and Start Over</button>
+                </div>
             </section>
         </main>
         
@@ -249,7 +161,7 @@
                     Made with <span class="heart" aria-label="love">❤️</span> by Bros AI
                 </a>
                 <div class="footer-links">
-                    <a href="https://github.com/Bros-AI" target="_blank" rel="noopener noreferrer" aria-label="Bros AI on GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                    <a href="https://github.com/Bros-AI/PDF-Analyzer-Pro" target="_blank" rel="noopener noreferrer" aria-label="Project on GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
                     <a href="https://x.com/GauthierBros" target="_blank" rel="noopener noreferrer" aria-label="Gauthier Bros on X (formerly Twitter)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
                     <a href="https://www.linkedin.com/in/gauthier-bros/" target="_blank" rel="noopener noreferrer" aria-label="Gauthier Bros on LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
                 </div>
@@ -265,9 +177,7 @@
                 <img src="https://github.com/BrosG.png" alt="Photo of Gauthier Bros" class="author-avatar">
                 <div class="chat-bubble">
                     <p>Hi! Gauthier here.</p>
-                    <p>While my digital algorithms are at work, know that we're carefully analyzing <strong>every page</strong> of your PDF to extract structure, text, and form fields. A little <strong>patience</strong> now will give you comprehensive insights for AI automation!</p>
-                    <p><strong>Need a custom PDF analysis tool or AI automation for your business?</strong> I'd love to discuss your project. Contact me at <a href="mailto:gauthier@bros.ai">gauthier@bros.ai</a>.</p>
-                    <p class="ps-text">P.S. If you find this tool useful, press Ctrl+D or Cmd+D to bookmark it for later!</p>
+                    <p>My algorithms are working their magic on your PDF. This process is 100% private and happens entirely in your browser. Your file is never uploaded anywhere.</p>
                 </div>
             </div>
             <p class="main-progress-text" id="loading-text">Preparing analysis...</p>
@@ -275,75 +185,147 @@
     </div>
 
     <script>
-        // Set PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const analysisMessages = [
-            "Scanning document structure...",
-            "Extracting text content and metadata...",
-            "Identifying form fields and signatures...",
-            "Analyzing page layouts and elements...",
-            "Processing fonts and styling information...",
-            "Detecting images and graphics...",
-            "Compiling comprehensive analysis...",
-            "Generating AI-friendly report format...",
-            "Almost done... preparing final report...",
-            "Analysis complete! Your PDF secrets revealed."
-        ];
-
-        class PDFAnalyzer {
+        class PDFFiller {
             constructor() {
-                this.state = {
-                    files: [],
-                    isProcessing: false,
-                };
+                this.state = { files: [] };
                 this.elements = this.initializeElements();
                 this.initializeEventListeners();
+                this.loadingStartTime = null;
+                this.MIN_LOADING_TIME = 1500;
             }
 
             initializeElements() {
                 return {
                     uploadContainer: document.getElementById('upload-container'),
                     fileInput: document.getElementById('file-input'),
-                    controlsSection: document.getElementById('controls-section'),
-                    extractText: document.getElementById('extract-text'),
-                    extractFields: document.getElementById('extract-fields'),
-                    extractStructure: document.getElementById('extract-structure'),
-                    extractImages: document.getElementById('extract-images'),
-                    outputFormat: document.getElementById('output-format'),
-                    includePreview: document.getElementById('include-preview'),
-                    analyzeBtn: document.getElementById('analyze-btn'),
                     resetBtn: document.getElementById('reset-btn'),
-                    downloadReportsBtn: document.getElementById('download-reports-btn'),
                     pdfQueueSection: document.getElementById('pdf-queue-section'),
                     pdfGrid: document.getElementById('pdf-grid'),
                     pdfCount: document.getElementById('pdf-count'),
                     errorMessage: document.getElementById('error-message'),
                     loadingOverlay: document.getElementById('loading-overlay'),
                     loadingText: document.getElementById('loading-text'),
-                    totalStatsSection: document.getElementById('total-stats-section'),
-                    totalPages: document.getElementById('total-pages'),
-                    totalFields: document.getElementById('total-fields'),
-                    totalTextElements: document.getElementById('total-text-elements'),
                 };
             }
 
             initializeEventListeners() {
                 this.elements.fileInput.addEventListener('change', (e) => this.handleFileSelect(e.target.files));
                 this.setupDragAndDrop();
-                this.elements.analyzeBtn.addEventListener('click', () => this.analyzeAllPDFs());
                 this.elements.resetBtn.addEventListener('click', () => this.resetApplication());
-                this.elements.downloadReportsBtn.addEventListener('click', () => this.downloadAllReports());
                 this.elements.pdfGrid.addEventListener('click', (e) => {
                     const target = e.target.closest('button');
                     if (!target) return;
                     const card = target.closest('.pdf-card');
                     const fileId = card.dataset.id;
-                    if (target.classList.contains('download-btn')) this.downloadSingleReport(fileId);
                     if (target.classList.contains('remove-btn')) this.removePDF(fileId);
+                    if (target.classList.contains('get-json-btn')) this.handleGetFillableJSON(fileId);
+                    if (target.classList.contains('fill-pdf-btn')) this.handleFillAndDownload(fileId);
                 });
             }
 
+            async handleGetFillableJSON(fileId) {
+                const fileObj = this.state.files.find(f => f.id === fileId);
+                const card = this.elements.pdfGrid.querySelector(`[data-id="${fileId}"]`);
+                const textarea = card.querySelector('.filler-textarea');
+                const statusEl = card.querySelector('.filler-status');
+
+                if (!fileObj || !fileObj.analysis) {
+                    this.showStatus(statusEl, "Analysis data not found.", 'error');
+                    return;
+                }
+
+                if (fileObj.analysis.fieldDetails.length === 0) {
+                     this.showStatus(statusEl, "No fillable form fields found in this PDF.", 'error');
+                     textarea.value = "[]";
+                     return;
+                }
+                
+                const jsonTemplate = fileObj.analysis.fieldDetails.map(field => ({
+                    fieldName: field.fieldName,
+                    type: field.fieldType,
+                    options: field.options.length > 0 ? field.options.map(opt => opt.displayValue || opt) : null,
+                    value: field.fieldValue || ""
+                }));
+
+                textarea.value = JSON.stringify(jsonTemplate, null, 2);
+                this.showStatus(statusEl, "JSON template generated successfully!", 'success');
+            }
+
+            async handleFillAndDownload(fileId) {
+                this.showLoading(true, 'Filling your PDF...');
+                const fileObj = this.state.files.find(f => f.id === fileId);
+                const card = this.elements.pdfGrid.querySelector(`[data-id="${fileId}"]`);
+                const textarea = card.querySelector('.filler-textarea');
+                const statusEl = card.querySelector('.filler-status');
+                
+                // **FIX 1: Robust Input Validation**
+                const jsonText = textarea.value.trim();
+                if (!jsonText) {
+                    this.showStatus(statusEl, "Error: JSON data area is empty.", 'error');
+                    this.showLoading(false);
+                    return;
+                }
+                
+                let data;
+                try {
+                    data = JSON.parse(jsonText);
+                } catch (e) {
+                    this.showStatus(statusEl, "Error: Invalid JSON format.", 'error');
+                    this.showLoading(false);
+                    return;
+                }
+
+                if (!Array.isArray(data)) {
+                    this.showStatus(statusEl, "Error: JSON data must be an array.", 'error');
+                    this.showLoading(false);
+                    return;
+                }
+                
+                try {
+                    const { PDFDocument } = PDFLib;
+                    // Use the safe, non-detached ArrayBuffer
+                    const pdfDoc = await PDFDocument.load(fileObj.arrayBuffer);
+                    const form = pdfDoc.getForm();
+
+                    data.forEach(field => {
+                        try {
+                            const formField = form.getField(field.fieldName);
+                            if (!formField) {
+                                console.warn(`Field "${field.fieldName}" not found in PDF form.`);
+                                return;
+                            }
+                            
+                            if (formField instanceof PDFLib.PDFTextField) {
+                                formField.setText(String(field.value || ''));
+                            } else if (formField instanceof PDFLib.PDFCheckBox) {
+                                if (field.value === true) formField.check();
+                                else formField.uncheck();
+                            } else if (formField instanceof PDFLib.PDFDropdown) {
+                                if (field.value) formField.select(String(field.value));
+                            } else if (formField instanceof PDFLib.PDFRadioGroup) {
+                                if (field.value) formField.select(String(field.value));
+                            }
+                        } catch(e) {
+                             console.error(`Could not fill field '${field.fieldName}': ${e.message}`);
+                        }
+                    });
+                    
+                    const pdfBytes = await pdfDoc.save();
+                    const filledBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    const newFileName = fileObj.file.name.replace('.pdf', '-filled.pdf');
+                    this.triggerDownload(URL.createObjectURL(filledBlob), newFileName);
+                    this.showStatus(statusEl, "PDF filled and download started!", 'success');
+
+                } catch (error) {
+                    console.error("PDF filling failed:", error);
+                    this.showStatus(statusEl, `Error: ${error.message}`, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+            
             setupDragAndDrop() {
                 const dropZone = this.elements.uploadContainer;
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false));
@@ -354,7 +336,7 @@
 
             async handleFileSelect(files) {
                 if (!files || files.length === 0) return;
-                this.showLoading(true, `Loading ${files.length} PDF(s)...`);
+                this.showLoading(true, `Analyzing ${files.length} PDF(s)...`);
                 const filePromises = Array.from(files).map(file => this.processFile(file)).filter(p => p);
                 await Promise.all(filePromises);
                 this.renderPDFGrid();
@@ -371,12 +353,19 @@
                     const fileReader = new FileReader();
                     fileReader.onload = async (e) => {
                         try {
-                            const pdfData = new Uint8Array(e.target.result);
-                            const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                            const originalBuffer = e.target.result;
+                            
+                            // **FIX 2: Create a safe copy for pdf-lib before pdf.js detaches the original**
+                            const bufferForPdfLib = originalBuffer.slice(0);
+                            const bufferForPdfJs = new Uint8Array(originalBuffer);
+
+                            const pdf = await pdfjsLib.getDocument({ data: bufferForPdfJs }).promise;
                             const thumbnailUrl = await this.generatePDFThumbnail(pdf);
+                            
                             const fileObj = {
                                 id: `${file.name}-${file.size}-${Date.now()}`,
                                 file,
+                                arrayBuffer: bufferForPdfLib, // Store the safe copy
                                 pdfDocument: pdf,
                                 original: { 
                                     pages: pdf.numPages,
@@ -386,10 +375,15 @@
                                 status: 'pending',
                                 analysis: null,
                             };
+                            
+                            fileObj.analysis = await this.performPDFAnalysis(pdf);
+                            fileObj.status = 'done';
                             this.state.files.push(fileObj);
                             resolve();
+
                         } catch (error) {
-                            this.showError(`Could not read PDF: ${file.name}. ${error.message}`);
+                            console.error(error);
+                            this.showError(`Could not analyze PDF: ${file.name}. Is it a valid, uncorrupted file?`);
                             resolve();
                         }
                     };
@@ -399,6 +393,27 @@
                     };
                     fileReader.readAsArrayBuffer(file);
                 });
+            }
+            
+            async performPDFAnalysis(pdfDocument) {
+                const analysis = { fieldDetails: [] };
+                for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+                    const page = await pdfDocument.getPage(pageNum);
+                    const annotations = await page.getAnnotations();
+                    annotations
+                        .filter(ann => ann.subtype === 'Widget' && ann.fieldName)
+                        .forEach(field => {
+                            if (!analysis.fieldDetails.some(f => f.fieldName === field.fieldName)) {
+                                analysis.fieldDetails.push({
+                                    fieldName: field.fieldName,
+                                    fieldType: field.fieldType,
+                                    fieldValue: field.fieldValue || '',
+                                    options: field.options || []
+                                });
+                            }
+                        });
+                }
+                return analysis;
             }
 
             async generatePDFThumbnail(pdf) {
@@ -419,519 +434,112 @@
 
             updateUIState() {
                 const hasFiles = this.state.files.length > 0;
-                const hasAnalyzedFiles = this.state.files.some(f => f.status === 'done');
-                this.elements.controlsSection.style.display = hasFiles ? 'block' : 'none';
                 this.elements.pdfQueueSection.style.display = hasFiles ? 'block' : 'none';
-                this.elements.analyzeBtn.disabled = !this.state.files.some(f => f.status === 'pending') || this.state.isProcessing;
                 this.elements.pdfCount.textContent = this.state.files.length;
-                this.elements.downloadReportsBtn.style.display = hasAnalyzedFiles ? 'inline-flex' : 'none';
-                this.elements.totalStatsSection.style.display = hasAnalyzedFiles ? 'block' : 'none';
             }
 
             renderPDFGrid() {
-                this.elements.pdfGrid.innerHTML = '';
+                const grid = this.elements.pdfGrid;
+                grid.innerHTML = '';
+                
+                grid.classList.remove('item-count-1', 'item-count-2');
+                const count = this.state.files.length;
+                if (count === 1) grid.classList.add('item-count-1');
+                if (count === 2) grid.classList.add('item-count-2');
+                
                 this.state.files.forEach(fileObj => {
                     const card = document.createElement('div');
-                    card.className = `pdf-card status-border-${fileObj.status}`;
+                    card.className = `pdf-card`;
                     card.dataset.id = fileObj.id;
-                    const originalSize = this.formatFileSize(fileObj.original.size);
-                    let statusHTML;
-                    if (fileObj.status === 'processing') {
-                        statusHTML = `
-                            <div class="pdf-processing-state">
-                                <div class="progress-bar">
-                                    <div class="progress-bar-fill" style="width: 0%;"></div>
-                                </div>
-                                <p class="progress-text">Initializing analysis...</p>
-                            </div>`;
-                    } else if (fileObj.status === 'done' && fileObj.analysis) {
-                        const analysis = fileObj.analysis;
-                        statusHTML = `
-                            <div class="pdf-results">
-                                <p><strong>Pages:</strong> ${analysis.pages}</p>
-                                <p><strong>Form Fields:</strong> ${analysis.formFields}</p>
-                                <p><strong>Text Elements:</strong> ${analysis.textElements}</p>
-                                <p class="analysis-summary"><strong>Report Ready!</strong></p>
-                            </div>`;
-                    } else {
-                        statusHTML = `<span class="status-badge status-${fileObj.status}">${fileObj.status}</span>`;
-                    }
+                    const fieldCount = fileObj.analysis ? fileObj.analysis.fieldDetails.length : 0;
+                    
                     card.innerHTML = `
                         <div class="pdf-thumbnail">
-                            ${fileObj.original.thumbnailUrl ? 
-                                `<img src="${fileObj.original.thumbnailUrl}" alt="Preview of ${fileObj.file.name}">` :
-                                `<div class="pdf-thumbnail-placeholder">
-                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
-                                    <span>PDF</span>
-                                </div>`
-                            }
+                            <img src="${fileObj.original.thumbnailUrl}" alt="Preview of ${fileObj.file.name}">
                         </div>
                         <div class="pdf-info">
                             <p class="pdf-filename">${fileObj.file.name}</p>
-                            <p class="pdf-stats">${fileObj.original.pages} pages (${originalSize})</p>
-                            ${statusHTML}
+                            <p class="pdf-stats">${fileObj.original.pages} pages | ${fieldCount} fillable form fields</p>
+                            
+                            <div class="pdf-filler-section">
+                                <button class="btn btn-secondary get-json-btn">1. Get Fillable Fields JSON</button>
+                                <textarea class="filler-textarea" placeholder="Click button above to generate a template, or paste your completed JSON here..."></textarea>
+                                <div class="filler-status"></div>
+                                <button class="btn btn-success fill-pdf-btn">2. Fill PDF & Download</button>
+                            </div>
+
                             <div class="pdf-actions">
                                 <button class="btn btn-secondary remove-btn">Remove</button>
-                                <button class="btn btn-success download-btn" style="display: ${fileObj.analysis ? 'flex' : 'none'}">Download</button>
                             </div>
                         </div>`;
-                    this.elements.pdfGrid.appendChild(card);
+                    grid.appendChild(card);
                 });
-            }
-
-            async analyzeAllPDFs() {
-                if (this.state.isProcessing) return;
-                this.state.isProcessing = true;
-                this.updateUIState();
-                const filesToProcess = this.state.files.filter(f => f.status === 'pending');
-                for (const [index, fileObj] of filesToProcess.entries()) {
-                    fileObj.status = 'processing';
-                    this.renderPDFGrid();
-                    const progressCallback = (progress) => {
-                        this.showLoading(true, `Analyzing ${index + 1}/${filesToProcess.length}: ${fileObj.file.name} (${progress}%)`);
-                        const cardEl = this.elements.pdfGrid.querySelector(`[data-id="${fileObj.id}"]`);
-                        if (cardEl) {
-                            const fillEl = cardEl.querySelector('.progress-bar-fill');
-                            const textEl = cardEl.querySelector('.progress-text');
-                            if (fillEl) fillEl.style.width = `${progress}%`;
-                            if (textEl) textEl.textContent = `Analyzing... ${progress}%`;
-                        }
-                    };
-                    try {
-                        const analysis = await this.performPDFAnalysis(fileObj.pdfDocument, fileObj.file, progressCallback);
-                        fileObj.analysis = analysis;
-                        fileObj.status = 'done';
-                    } catch (error) {
-                        console.error('Analysis failed:', error);
-                        fileObj.status = 'error';
-                        this.showError(`Failed to analyze ${fileObj.file.name}. ${error.message}`);
-                    }
-                    this.renderPDFGrid();
-                }
-                this.state.isProcessing = false;
-                this.showLoading(false);
-                this.updateTotalStats();
-                this.updateUIState();
-            }
-
-            async performPDFAnalysis(pdfDocument, file, onProgress) {
-                const analysis = {
-                    fileName: file.name,
-                    fileSize: file.size,
-                    pages: pdfDocument.numPages,
-                    metadata: {},
-                    textContent: [],
-                    formFields: 0,
-                    fieldDetails: [],
-                    structure: [],
-                    images: [],
-                    textElements: 0,
-                    generatedAt: new Date().toISOString()
-                };
-
-                try {
-                    // Extract metadata
-                    const metadata = await pdfDocument.getMetadata();
-                    if (metadata.info) {
-                        analysis.metadata = {
-                            title: metadata.info.Title || '',
-                            author: metadata.info.Author || '',
-                            subject: metadata.info.Subject || '',
-                            creator: metadata.info.Creator || '',
-                            producer: metadata.info.Producer || '',
-                            creationDate: metadata.info.CreationDate || '',
-                            modDate: metadata.info.ModDate || ''
-                        };
-                    }
-                } catch (error) {
-                    console.warn('Could not extract metadata:', error);
-                }
-
-                // Process each page
-                for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
-                    const progress = Math.round((pageNum / pdfDocument.numPages) * 100);
-                    onProgress(progress);
-
-                    try {
-                        const page = await pdfDocument.getPage(pageNum);
-                        const pageAnalysis = {
-                            pageNumber: pageNum,
-                            text: '',
-                            textItems: [],
-                            annotations: [],
-                            viewport: null
-                        };
-
-                        // Extract text content if enabled
-                        if (this.elements.extractText.checked) {
-                            const textContent = await page.getTextContent();
-                            const textItems = textContent.items.map(item => ({
-                                text: item.str,
-                                x: Math.round(item.transform[4]),
-                                y: Math.round(item.transform[5]),
-                                width: Math.round(item.width),
-                                height: Math.round(item.height),
-                                fontName: item.fontName || '',
-                                fontSize: Math.round(item.transform[0]) || 0
-                            }));
-                            
-                            pageAnalysis.text = textContent.items.map(item => item.str).join(' ');
-                            pageAnalysis.textItems = textItems;
-                            analysis.textElements += textItems.length;
-                        }
-
-                        // Extract annotations and form fields if enabled
-                        if (this.elements.extractFields.checked) {
-                            const annotations = await page.getAnnotations();
-                            const formFields = annotations.filter(ann => 
-                                ann.subtype === 'Widget' || ann.fieldType
-                            );
-                            
-                            formFields.forEach(field => {
-                                analysis.fieldDetails.push({
-                                    pageNumber: pageNum,
-                                    fieldName: field.fieldName || '',
-                                    fieldType: field.fieldType || field.subtype || 'unknown',
-                                    fieldValue: field.fieldValue || '',
-                                    alternativeText: field.alternativeText || '',
-                                    required: field.required || false,
-                                    readOnly: field.readOnly || false,
-                                    rect: field.rect || [],
-                                    options: field.options || []
-                                });
-                            });
-
-                            analysis.formFields += formFields.length;
-                            pageAnalysis.annotations = annotations.map(ann => ({
-                                type: ann.subtype || 'unknown',
-                                rect: ann.rect || [],
-                                contents: ann.contents || ''
-                            }));
-                        }
-
-                        // Extract structure information if enabled
-                        if (this.elements.extractStructure.checked) {
-                            const viewport = page.getViewport({ scale: 1.0 });
-                            pageAnalysis.viewport = {
-                                width: Math.round(viewport.width),
-                                height: Math.round(viewport.height),
-                                rotation: viewport.rotation
-                            };
-                        }
-
-                        analysis.textContent.push(pageAnalysis);
-                    } catch (pageError) {
-                        console.warn(`Error processing page ${pageNum}:`, pageError);
-                    }
-                }
-
-                // Generate structured analysis
-                if (this.elements.extractStructure.checked) {
-                    analysis.structure = this.analyzeDocumentStructure(analysis.textContent);
-                }
-
-                return analysis;
-            }
-
-            analyzeDocumentStructure(textContent) {
-                const structure = {
-                    sections: [],
-                    headings: [],
-                    paragraphs: [],
-                    tables: [],
-                    lists: []
-                };
-
-                textContent.forEach(page => {
-                    if (!page.textItems) return;
-
-                    // Simple heading detection based on font size
-                    const avgFontSize = page.textItems.reduce((sum, item) => sum + item.fontSize, 0) / page.textItems.length;
-                    
-                    page.textItems.forEach(item => {
-                        if (item.fontSize > avgFontSize * 1.2 && item.text.trim().length > 0) {
-                            structure.headings.push({
-                                text: item.text,
-                                level: Math.min(Math.round(item.fontSize / avgFontSize), 6),
-                                page: page.pageNumber,
-                                position: { x: item.x, y: item.y }
-                            });
-                        }
-                    });
-
-                    // Group text into paragraphs
-                    const paragraphs = this.groupTextIntoParagraphs(page.textItems);
-                    structure.paragraphs.push(...paragraphs.map(p => ({
-                        ...p,
-                        page: page.pageNumber
-                    })));
-                });
-
-                return structure;
-            }
-
-            groupTextIntoParagraphs(textItems) {
-                if (!textItems.length) return [];
-                
-                const paragraphs = [];
-                let currentParagraph = { text: '', items: [] };
-                let lastY = textItems[0].y;
-
-                textItems.forEach(item => {
-                    const yDiff = Math.abs(item.y - lastY);
-                    
-                    // Start new paragraph if vertical gap is significant
-                    if (yDiff > item.height * 1.5 && currentParagraph.text.trim()) {
-                        paragraphs.push(currentParagraph);
-                        currentParagraph = { text: '', items: [] };
-                    }
-                    
-                    currentParagraph.text += item.text + ' ';
-                    currentParagraph.items.push(item);
-                    lastY = item.y;
-                });
-
-                if (currentParagraph.text.trim()) {
-                    paragraphs.push(currentParagraph);
-                }
-
-                return paragraphs.map(p => ({
-                    text: p.text.trim(),
-                    wordCount: p.text.trim().split(/\s+/).length,
-                    bounds: this.calculateTextBounds(p.items)
-                }));
-            }
-
-            calculateTextBounds(items) {
-                if (!items.length) return { x: 0, y: 0, width: 0, height: 0 };
-                
-                const xs = items.map(item => item.x);
-                const ys = items.map(item => item.y);
-                const rights = items.map(item => item.x + item.width);
-                const bottoms = items.map(item => item.y + item.height);
-
-                return {
-                    x: Math.min(...xs),
-                    y: Math.min(...ys),
-                    width: Math.max(...rights) - Math.min(...xs),
-                    height: Math.max(...bottoms) - Math.min(...ys)
-                };
-            }
-
-            generateReport(analysis) {
-                const format = this.elements.outputFormat.value;
-                
-                switch (format) {
-                    case 'detailed-json':
-                        return {
-                            content: JSON.stringify(analysis, null, 2),
-                            filename: `${analysis.fileName.replace('.pdf', '')}-detailed-analysis.json`,
-                            mimeType: 'application/json'
-                        };
-                    
-                    case 'markdown':
-                        return {
-                            content: this.generateMarkdownReport(analysis),
-                            filename: `${analysis.fileName.replace('.pdf', '')}-analysis-report.md`,
-                            mimeType: 'text/markdown'
-                        };
-                    
-                    default: // json (AI-friendly)
-                        const aiReport = {
-                            document: {
-                                fileName: analysis.fileName,
-                                pages: analysis.pages,
-                                metadata: analysis.metadata
-                            },
-                            formFields: analysis.fieldDetails.map(field => ({
-                                name: field.fieldName,
-                                type: field.fieldType,
-                                currentValue: field.fieldValue,
-                                required: field.required,
-                                options: field.options,
-                                page: field.pageNumber
-                            })),
-                            structure: {
-                                headings: analysis.structure?.headings || [],
-                                sections: analysis.textContent.map(page => ({
-                                    page: page.pageNumber,
-                                    text: page.text,
-                                    wordCount: page.text ? page.text.split(/\s+/).length : 0
-                                }))
-                            },
-                            aiInstructions: {
-                                purpose: "This is a structured analysis of a PDF document for AI processing",
-                                formFields: "Use the formFields array to identify fillable fields and their requirements",
-                                textContent: "Use the structure.sections to understand document content and context",
-                                recommendations: [
-                                    "Process form fields in the order they appear on each page",
-                                    "Respect field types and validation requirements",
-                                    "Use document context to provide relevant field values",
-                                    "Consider required fields as high priority for completion"
-                                ]
-                            },
-                            generatedAt: analysis.generatedAt
-                        };
-                        return {
-                            content: JSON.stringify(aiReport, null, 2),
-                            filename: `${analysis.fileName.replace('.pdf', '')}-ai-analysis.json`,
-                            mimeType: 'application/json'
-                        };
-                }
-            }
-
-            generateMarkdownReport(analysis) {
-                let markdown = `# PDF Analysis Report: ${analysis.fileName}\n\n`;
-                markdown += `**Generated:** ${new Date(analysis.generatedAt).toLocaleString()}\n\n`;
-                
-                markdown += `## Document Overview\n`;
-                markdown += `- **Pages:** ${analysis.pages}\n`;
-                markdown += `- **File Size:** ${this.formatFileSize(analysis.fileSize)}\n`;
-                markdown += `- **Form Fields:** ${analysis.formFields}\n`;
-                markdown += `- **Text Elements:** ${analysis.textElements}\n\n`;
-
-                if (analysis.metadata && Object.keys(analysis.metadata).length > 0) {
-                    markdown += `## Metadata\n`;
-                    Object.entries(analysis.metadata).forEach(([key, value]) => {
-                        if (value) markdown += `- **${key}:** ${value}\n`;
-                    });
-                    markdown += `\n`;
-                }
-
-                if (analysis.fieldDetails && analysis.fieldDetails.length > 0) {
-                    markdown += `## Form Fields\n\n`;
-                    analysis.fieldDetails.forEach((field, index) => {
-                        markdown += `### Field ${index + 1}: ${field.fieldName || 'Unnamed'}\n`;
-                        markdown += `- **Type:** ${field.fieldType}\n`;
-                        markdown += `- **Page:** ${field.pageNumber}\n`;
-                        if (field.fieldValue) markdown += `- **Current Value:** ${field.fieldValue}\n`;
-                        if (field.required) markdown += `- **Required:** Yes\n`;
-                        if (field.options && field.options.length > 0) {
-                            markdown += `- **Options:** ${field.options.join(', ')}\n`;
-                        }
-                        markdown += `\n`;
-                    });
-                }
-
-                if (analysis.structure && analysis.structure.headings && analysis.structure.headings.length > 0) {
-                    markdown += `## Document Structure\n\n`;
-                    analysis.structure.headings.forEach(heading => {
-                        const level = '#'.repeat(Math.min(heading.level + 2, 6));
-                        markdown += `${level} ${heading.text} (Page ${heading.page})\n`;
-                    });
-                    markdown += `\n`;
-                }
-
-                markdown += `## Page Content Summary\n\n`;
-                analysis.textContent.forEach(page => {
-                    if (page.text) {
-                        const wordCount = page.text.split(/\s+/).length;
-                        markdown += `**Page ${page.pageNumber}:** ${wordCount} words\n`;
-                        if (page.text.length > 200) {
-                            markdown += `${page.text.substring(0, 200)}...\n\n`;
-                        } else {
-                            markdown += `${page.text}\n\n`;
-                        }
-                    }
-                });
-
-                return markdown;
-            }
-
-            async downloadAllReports() {
-                const analyzedFiles = this.state.files.filter(f => f.status === 'done' && f.analysis);
-                if (analyzedFiles.length === 0) return;
-                this.showLoading(true, `Generating ${analyzedFiles.length} reports...`);
-                try {
-                    const zip = new JSZip();
-                    analyzedFiles.forEach(fileObj => {
-                        const report = this.generateReport(fileObj.analysis);
-                        zip.file(report.filename, report.content);
-                    });
-                    const content = await zip.generateAsync({ type: 'blob' });
-                    this.triggerDownload(URL.createObjectURL(content), `pdf-analysis-reports-${Date.now()}.zip`);
-                } catch (error) {
-                    console.error('Report generation failed:', error);
-                    this.showError('There was an error generating the reports.');
-                } finally {
-                    this.showLoading(false);
-                }
-            }
-
-            downloadSingleReport(fileId) {
-                const fileObj = this.state.files.find(f => f.id === fileId);
-                if (!fileObj || !fileObj.analysis) return;
-                const report = this.generateReport(fileObj.analysis);
-                const blob = new Blob([report.content], { type: report.mimeType });
-                this.triggerDownload(URL.createObjectURL(blob), report.filename);
             }
 
             triggerDownload(href, filename) {
                 const link = document.createElement('a');
-                link.href = href; 
-                link.download = filename;
+                link.href = href; link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                // Clean up object URL after a delay
                 setTimeout(() => URL.revokeObjectURL(href), 1000);
             }
 
             removePDF(fileId) {
                 this.state.files = this.state.files.filter(f => f.id !== fileId);
                 this.renderPDFGrid();
-                this.updateTotalStats();
                 this.updateUIState();
             }
 
             resetApplication() {
-                if (this.state.files.length > 0 && !confirm('Are you sure? This will clear all PDF files and analyses.')) return;
-                this.state = { ...this.state, files: [] };
+                if (this.state.files.length > 0 && !confirm('Are you sure? This will clear all PDF files.')) return;
+                this.state = { files: [] };
                 this.elements.fileInput.value = '';
                 this.renderPDFGrid();
-                this.updateTotalStats();
                 this.updateUIState();
             }
             
-            updateTotalStats() {
-                const analyzedFiles = this.state.files.filter(f => f.status === 'done' && f.analysis);
-                let totalPages = 0;
-                let totalFields = 0;
-                let totalTextElements = 0;
-                
-                analyzedFiles.forEach(f => {
-                    totalPages += f.analysis.pages;
-                    totalFields += f.analysis.formFields;
-                    totalTextElements += f.analysis.textElements;
-                });
-                
-                this.elements.totalPages.textContent = totalPages;
-                this.elements.totalFields.textContent = totalFields;
-                this.elements.totalTextElements.textContent = totalTextElements;
+            showError(message) { 
+                const el = this.elements.errorMessage;
+                el.textContent = message;
+                el.style.display = 'block';
+                setTimeout(() => { el.style.display = 'none'; el.textContent = ''; }, 5000); 
             }
 
-            showError(message) { 
-                this.elements.errorMessage.textContent = message; 
-                this.elements.errorMessage.style.display = 'block'; 
-                setTimeout(() => this.elements.errorMessage.style.display = 'none', 5000); 
+            showStatus(element, message, type = 'info') {
+                element.textContent = message;
+                element.className = `filler-status ${type}`;
+                setTimeout(() => element.textContent = '', 5000);
             }
             
-            showLoading(show, text = 'Processing...') { 
-                this.elements.loadingText.textContent = text; 
-                this.elements.loadingOverlay.classList.toggle('visible', show); 
-            }
-            
-            formatFileSize(bytes) { 
-                if (bytes === 0) return '0 B'; 
-                const k = 1024; 
-                const sizes = ['B', 'KB', 'MB', 'GB']; 
-                const i = Math.floor(Math.log(bytes) / Math.log(k)); 
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]; 
+            showLoading(show, text = 'Processing...') {
+                if (show) {
+                    this.elements.loadingText.textContent = text; 
+                    this.elements.loadingOverlay.classList.add('visible');
+                    this.loadingStartTime = Date.now();
+                } else {
+                    if (!this.loadingStartTime) {
+                        this.elements.loadingOverlay.classList.remove('visible');
+                        return;
+                    }
+                    const elapsedTime = Date.now() - this.loadingStartTime;
+                    const remainingTime = this.MIN_LOADING_TIME - elapsedTime;
+                    
+                    if (remainingTime > 0) {
+                        setTimeout(() => {
+                            this.elements.loadingOverlay.classList.remove('visible');
+                            this.loadingStartTime = null;
+                        }, remainingTime);
+                    } else {
+                        this.elements.loadingOverlay.classList.remove('visible');
+                        this.loadingStartTime = null;
+                    }
+                }
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            window.pdfAnalyzer = new PDFAnalyzer();
+            window.pdfFiller = new PDFFiller();
         });
     </script>
 </body>
